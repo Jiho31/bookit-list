@@ -6,21 +6,33 @@ function SearchResult(props) {
   const [result, setResult] = useState([]);
 
   useEffect(() => {
+    // const options = {
+    //   params: {
+    //     query: keyword,
+    //     display: 10,
+    //   },
+    //   headers: {
+    //     "X-Naver-Client-Id": process.env.REACT_APP_CLIENT_ID,
+    //     "X-Naver-Client-Secret": process.env.REACT_APP_CLIENT_SECRET,
+    //   },
+    // };
     const options = {
       params: {
         query: keyword,
-        display: 10,
+        size: 10, // default
       },
       headers: {
-        "X-Naver-Client-Id": process.env.REACT_APP_CLIENT_ID,
-        "X-Naver-Client-Secret": process.env.REACT_APP_CLIENT_SECRET,
+        Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_AK}`,
       },
     };
     const fetchBooksAPI = async () => {
       try {
-        const response = await axios.get("/v1/search/book.json", options);
-        setResult(response.data.items);
-        console.log(response.data.items);
+        // const response = await axios.get("/v1/search/book.json", options);
+        const response = await axios.get("/v3/search/book", options);
+        // setResult(response.data.items);
+        setResult(response.data.documents);
+        console.log(response.data);
+        console.log(response.data.documents);
       } catch (err) {
         console.error(err);
       }
@@ -33,10 +45,10 @@ function SearchResult(props) {
       <ul>
         {result.map((item) => (
           <li key={item.isbn}>
-            <img src={item.image} alt={`${item.title} 표지`} />
+            <img src={item.thumbnail} alt={`${item.title} 표지`} />
             <h2>{item.title}</h2>
-            <h4>{item.author}</h4>
-            <p>{item.description}</p>
+            <h4>{item.authors[0]}</h4>
+            <p>{item.contents} ..</p>
           </li>
         ))}
       </ul>

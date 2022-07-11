@@ -37,5 +37,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://openapi.naver.com"
+  "proxy": "https://dapi.kakao.com"
 }

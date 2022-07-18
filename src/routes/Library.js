@@ -12,12 +12,11 @@ function Library(props) {
   const observer = useRef();
 
   // 카카오 도서 검색 api 호출
-  const fetchBooksAPI = async () => {
-    console.log(pageNum);
+  const fetchBooksAPI = async (isFirstFetch = false) => {
     const options = {
       params: {
         query: keywordRef.current.value,
-        page: pageNum + 1,
+        page: isFirstFetch ? 1 : pageNum + 1,
         size: 15, // default = 10
       },
       headers: {
@@ -28,11 +27,11 @@ function Library(props) {
     try {
       setLoading(true);
       const response = await axios.get("/v3/search/book", options);
-      console.log(response.data.documents);
       setSearchResult((prev) => [
         ...new Set([...prev, ...response.data.documents]),
       ]);
       setLoading(false);
+      setPageNum((prev) => prev + 1);
     } catch {
       console.error("fetching error ⚠️");
     }
@@ -47,8 +46,9 @@ function Library(props) {
     setSearchResult([]);
 
     if (!keywordRef.current.value) return;
-    await fetchBooksAPI();
-    setPageNum(1);
+
+    // 도서 검색 api 호출
+    await fetchBooksAPI(true);
   };
 
   // Intersection Observer 설정
@@ -60,11 +60,11 @@ function Library(props) {
     };
     const onIntersect = async (entries) => {
       if (entries[0].isIntersecting && pageNum <= 5) {
-        setPageNum((prev) => {
-          if (prev < 4) {
-            return prev + 1;
-          }
-        });
+        // setPageNum((prev) => {
+        //   if (prev < 4) {
+        //     return prev + 1;
+        //   }
+        // });
         await fetchBooksAPI();
       } else return;
     };
@@ -106,9 +106,13 @@ function Library(props) {
         })}
       </section>
       {loading && <p>Loading...</p>}
-      <div>
-        <button onClick={scrollToTop}>🔝 위로</button>
-      </div>
+      {searchResult.length > 0 ? (
+        <div>
+          <button onClick={scrollToTop}>🔝 위로</button>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }

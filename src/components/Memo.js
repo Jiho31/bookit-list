@@ -1,15 +1,24 @@
 import { dbService } from "fbase";
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateMemo, removeMemo, selectMemosEntities } from "redux/memos";
 
-function Memo({ memoObj, isOwner }) {
+const Memo = React.memo(function Memo({ memoObj, isOwner }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [newMemo, setNewMemo] = useState(memoObj.content);
+  // const [newMemo, setNewMemo] = useState(memoObj.content);
+  const memos = useSelector(selectMemosEntities);
+  const newMemoInput = useRef();
+  newMemoInput.current = memoObj.content;
+
+  const dispatch = useDispatch();
 
   const memoDocRef = doc(dbService, "memo", `${memoObj.id}`);
 
   const onDeleteClick = async () => {
     await deleteDoc(memoDocRef);
+
+    dispatch(removeMemo(memoObj.id));
   };
   const onEditClick = () => {
     toggleEditing();
@@ -19,30 +28,37 @@ function Memo({ memoObj, isOwner }) {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    const newContent = newMemoInput.current.value;
+    console.log(newContent);
+
+    if (newContent === "") {
+      // 에러 처리
+      // 빈 메모를 입력할 수 없습니다 메시지 띄우기
+      return;
+    }
     toggleEditing();
 
     await updateDoc(memoDocRef, {
-      content: newMemo,
+      content: newContent,
     });
-  };
 
-  const onChangeHandler = (e) => {
-    const {
-      target: { value },
-    } = e;
-    setNewMemo(value);
+    dispatch(updateMemo({ ...memos[memoObj.id], content: newContent }));
   };
 
   return (
     <li>
       {isEditing ? (
         <form onSubmit={onSubmitHandler}>
-          <input type="text" value={newMemo} onChange={onChangeHandler}></input>
+          <input
+            type="text"
+            ref={newMemoInput}
+            defaultValue={memoObj.content}
+          ></input>
           <input type="submit" value="Save Memo"></input>
         </form>
       ) : (
         <>
-          <h3>{memoObj.content}</h3>
+          <h3>{memos[memoObj.id].content}</h3>
           {isOwner && (
             <>
               <button onClick={onDeleteClick}>Delete</button>
@@ -53,6 +69,6 @@ function Memo({ memoObj, isOwner }) {
       )}
     </li>
   );
-}
+});
 
 export default Memo;

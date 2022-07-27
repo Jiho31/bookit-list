@@ -7,25 +7,24 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  createMemo,
+  selectMemosLength,
+  selectMemosEntities,
+} from "../redux/memos";
 
 function Home({ userInfo }) {
-  const [memoInput, setMemoInput] = useState("");
-  const [memos, setMemos] = useState([]);
+  const memoInput = useRef();
 
-  // const getMemos = async () => {
-  //   const querySnapshot = await getDocs(collection(dbService, "memo"));
-  //   querySnapshot.forEach((doc) => {
-  //     const memoObj = {
-  //       ...doc.data(),
-  //       id: doc.id,
-  //     };
-  //     setMemos((prev) => [memoObj, ...prev]);
-  //   });
-  // };
+  const memos = useSelector(selectMemosEntities);
+  const memosLength = useSelector(selectMemosLength);
 
+  const dispatch = useDispatch();
+
+  // firebase 데이터베이스에 있는 메모 데이터 읽어와서 리덕스 스토어에 저장
   useEffect(() => {
-    // getMemos();
     const q = query(
       collection(dbService, "memo"),
       orderBy("createdAt", "desc")
@@ -35,58 +34,60 @@ function Home({ userInfo }) {
         id: doc.id,
         ...doc.data(),
       }));
-      setMemos(memoArr);
+
+      memoArr.forEach((data) => dispatch(createMemo(data)));
     });
-  }, []);
+  });
 
-  const onChangeHandler = (e) => {
-    const {
-      target: { value },
-    } = e;
-    setMemoInput(value);
-  };
-  const onSubmitHandler = async (e) => {
-    e.preventDefault();
+  const onSubmitHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    try {
-      const docRef = await addDoc(collection(dbService, "memo"), {
-        content: memoInput,
-        createdAt: Date.now(),
-        creatorId: userInfo.uid,
-      });
+      if (memoInput.current.value === "") return;
 
-      console.log("Document written with ID: ", docRef.id);
-    } catch (err) {
-      console.error("Error adding document:", err);
-    }
-    setMemoInput("");
-  };
+      try {
+        const newMemo = {
+          content: memoInput.current.value,
+          createdAt: new Date().toISOString().slice(0, 10),
+          creatorId: userInfo.uid,
+        };
+
+        const docRef = await addDoc(collection(dbService, "memo"), newMemo);
+
+        // console.log("Document written with ID: ", docRef.id);
+        dispatch(createMemo({ id: docRef.id, ...newMemo }));
+      } catch (err) {
+        console.error("Error adding document to database:", err);
+      }
+      memoInput.current.value = "";
+    },
+    [dispatch, userInfo.uid]
+  );
 
   return (
     <div>
       <form onSubmit={onSubmitHandler}>
-        <input
-          type="text"
-          onChange={onChangeHandler}
-          value={memoInput}
-          placeholder="Add memo"
-        ></input>
+        <input type="text" ref={memoInput} placeholder="Add memo"></input>
         <input type="submit" value="Add"></input>
       </form>
       <div>
         <h2>Memos</h2>
         <ul>
-          {memos.map((memo) => (
-            <Memo
-              key={memo.id}
-              memoObj={memo}
-              isOwner={memo.creatorId === userInfo.uid}
-            />
-          ))}
+          {memosLength > 0
+            ? Object.keys(memos).map((key) => {
+                return (
+                  <Memo
+                    key={memos[key].id}
+                    memoObj={memos[key]}
+                    isOwner={memos[key].creatorId === userInfo.uid}
+                  />
+                );
+              })
+            : ""}
         </ul>
       </div>
     </div>
   );
 }
 
-export default Home;
+export default React.memo(Home);

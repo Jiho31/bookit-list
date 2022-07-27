@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Router from "./Router";
 import { authService } from "fbase";
-import styled from "styled-components";
+import { createGlobalStyle } from "styled-components";
 
 function App() {
   const [init, setInit] = useState(false);
@@ -20,17 +20,18 @@ function App() {
     });
   }, []);
   return (
-    <GlobalStyle>
+    <>
+      <GlobalStyle />
       {init ? (
         <Router isLoggedIn={isLoggedIn} userInfo={userInfo} />
       ) : (
         "Initializing..."
       )}
-    </GlobalStyle>
+    </>
   );
 }
 
-const GlobalStyle = styled.div`
+const GlobalStyle = createGlobalStyle`
   /*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */
   blockquote,
   body,
@@ -99,6 +100,15 @@ const GlobalStyle = styled.div`
   th {
     padding: 0;
   }
+  a {
+    text-decoration: none
+  }
+  button {
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
 `;
 
 export default App;

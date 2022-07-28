@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import SearchResult from "components/SearchResult";
 import axios from "axios";
+import styled from "styled-components";
 
 function Library(props) {
   const [loading, setLoading] = useState(false);
@@ -83,28 +84,30 @@ function Library(props) {
   return (
     <div>
       <h1>Library</h1>
-      <form onSubmit={onSubmitHandler}>
+      <SearchBar onSubmit={onSubmitHandler}>
         <input
           id="keywordInput"
           ref={keywordRef}
           type="text"
           placeholder="도서명, 작가명 또는 ISBN 코드를 입력해서 검색하세요"
         />
-        <input type="submit" value="검색" />
-      </form>
-      <section id="books" style={{ border: "1px solid red" }}>
-        {searchResult.map((item, i) => {
-          return i === searchResult.length - 1 && !loading ? (
-            <div ref={lastItemRef} key={item.isbn + Date.now()}>
-              <SearchResult item={item} />
-            </div>
-          ) : (
-            <div key={item.isbn + Date.now()}>
-              <SearchResult item={item} />
-            </div>
-          );
-        })}
-      </section>
+        <input id="searchButton" type="submit" value="검색" />
+      </SearchBar>
+      <SearchResultContainer id="books" style={{ border: "1px solid red" }}>
+        <ul>
+          {searchResult.map((item, i) => {
+            return i === searchResult.length - 1 && !loading ? (
+              <div ref={lastItemRef} key={item.isbn + Date.now()}>
+                <SearchResult item={item} />
+              </div>
+            ) : (
+              <div key={item.isbn + Date.now()}>
+                <SearchResult item={item} />
+              </div>
+            );
+          })}
+        </ul>
+      </SearchResultContainer>
       {loading && <p>Loading...</p>}
       {searchResult.length > 0 ? (
         <div>
@@ -116,5 +119,33 @@ function Library(props) {
     </div>
   );
 }
+
+const SearchBar = styled.form`
+  width: fit-content;
+  margin: 0 auto;
+
+  #keywordInput {
+    width: 550px;
+    height: 40px;
+  }
+  #keywordInput:focus {
+    outline: none;
+  }
+
+  #searchButton {
+    width: 40px;
+    height: 40px;
+    margin-left: 20px;
+  }
+`;
+
+const SearchResultContainer = styled.section`
+  ul {
+    margin: 0 auto;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+  }
+`;
 
 export default Library;

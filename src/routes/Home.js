@@ -1,4 +1,5 @@
 import Memo from "components/Memo";
+import styled from "styled-components";
 import { dbService } from "fbase";
 import {
   addDoc,
@@ -17,10 +18,8 @@ import {
 
 function Home({ userInfo }) {
   const memoInput = useRef();
-
   const memos = useSelector(selectMemosEntities);
   const memosLength = useSelector(selectMemosLength);
-
   const dispatch = useDispatch();
 
   // firebase 데이터베이스에 있는 메모 데이터 읽어와서 리덕스 스토어에 저장
@@ -66,13 +65,13 @@ function Home({ userInfo }) {
 
   return (
     <div>
-      <form onSubmit={onSubmitHandler}>
+      <h2>Memos</h2>
+      <MemoForm onSubmit={onSubmitHandler}>
         <input type="text" ref={memoInput} placeholder="Add memo"></input>
-        <input type="submit" value="Add"></input>
-      </form>
+        <SubmitButton type="submit" value="Add"></SubmitButton>
+      </MemoForm>
       <div>
-        <h2>Memos</h2>
-        <ul>
+        <MemoListContainer>
           {memosLength > 0
             ? Object.keys(memos).map((key) => {
                 return (
@@ -84,10 +83,35 @@ function Home({ userInfo }) {
                 );
               })
             : ""}
-        </ul>
+        </MemoListContainer>
       </div>
     </div>
   );
 }
+
+const MemoForm = styled.form`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  input:first-child {
+    width: 500px;
+    height: 40px;
+  }
+`;
+
+const SubmitButton = styled.input`
+  width: 60px;
+  height: 35px;
+`;
+
+const MemoListContainer = styled.ul`
+  display: flex;
+  flex-direction: column;
+  // justify-content: center;
+  align-items: center;
+  padding: 40px;
+  margin: 100px;
+`;
 
 export default React.memo(Home);

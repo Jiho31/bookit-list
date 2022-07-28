@@ -3,6 +3,7 @@ import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateMemo, removeMemo, selectMemosEntities } from "redux/memos";
+import styled from "styled-components";
 
 const Memo = React.memo(function Memo({ memoObj, isOwner }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -46,7 +47,7 @@ const Memo = React.memo(function Memo({ memoObj, isOwner }) {
   };
 
   return (
-    <li>
+    <StyledMemo>
       {isEditing ? (
         <form onSubmit={onSubmitHandler}>
           <input
@@ -67,8 +68,15 @@ const Memo = React.memo(function Memo({ memoObj, isOwner }) {
           )}
         </>
       )}
-    </li>
+    </StyledMemo>
   );
 });
+
+const StyledMemo = styled.li`
+  width: 80%;
+  border: 3px solid pink;
+  padding: 20px;
+  margin: 5px;
+`;
 
 export default Memo;

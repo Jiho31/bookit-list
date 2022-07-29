@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import memosReducer from "./memos";
-import categoriesReducer from "./categories";
+import bookshelvesReducer from "./bookshelves";
 
 export default configureStore({
-  reducer: { memos: memosReducer, categories: categoriesReducer },
+  reducer: { memos: memosReducer, bookshelves: bookshelvesReducer },
 });

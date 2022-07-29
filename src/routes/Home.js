@@ -1,117 +1,167 @@
-import Memo from "components/Memo";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { dbService } from "fbase";
-import {
-  addDoc,
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import React, { useCallback, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  createMemo,
-  selectMemosLength,
-  selectMemosEntities,
-} from "../redux/memos";
+import SearchResult from "components/SearchResult";
+import axios from "axios";
+import Modal from "components/Modal";
 
 function Home({ userInfo }) {
-  const memoInput = useRef();
-  const memos = useSelector(selectMemosEntities);
-  const memosLength = useSelector(selectMemosLength);
-  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [searchResult, setSearchResult] = useState([]);
+  const [pageNum, setPageNum] = useState(0);
+  const keywordRef = useRef();
 
-  // firebase 데이터베이스에 있는 메모 데이터 읽어와서 리덕스 스토어에 저장
+  const lastItemRef = useRef();
+  const observer = useRef();
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsOpen((prev) => !prev);
+
+    if (document.body.style.overflow === "hidden") {
+      document.body.style.overflow = "auto";
+    } else {
+      document.body.style.overflow = "hidden";
+    }
+  };
+
+  // 카카오 도서 검색 api 호출
+  const fetchBooksAPI = async (isFirstFetch = false) => {
+    const options = {
+      params: {
+        query: keywordRef.current.value,
+        page: isFirstFetch ? 1 : pageNum + 1,
+        size: 15, // default = 10
+      },
+      headers: {
+        Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_AK}`,
+      },
+    };
+
+    try {
+      setLoading(true);
+      const response = await axios.get("/v3/search/book", options);
+      setSearchResult((prev) => [
+        ...new Set([...prev, ...response.data.documents]),
+      ]);
+      setLoading(false);
+      setPageNum((prev) => prev + 1);
+    } catch {
+      console.error("fetching error ⚠️");
+    }
+  };
+
+  // 도서 검색 버튼 클릭할 경우
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+
+    // 도서 검색 결과 빈 배열로 초기화
+    setPageNum(0);
+    setSearchResult([]);
+
+    if (!keywordRef.current.value) return;
+
+    // 도서 검색 api 호출
+    await fetchBooksAPI(true);
+  };
+
+  // Intersection Observer 설정
   useEffect(() => {
-    const q = query(
-      collection(dbService, "memo"),
-      orderBy("createdAt", "desc")
-    );
-    onSnapshot(q, (snapshot) => {
-      const memoArr = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+    const options = {
+      root: document,
+      rootMargin: "-20px",
+      threshold: 0.5,
+    };
+    const onIntersect = async (entries) => {
+      if (entries[0].isIntersecting && pageNum <= 5) {
+        // setPageNum((prev) => {
+        //   if (prev < 4) {
+        //     return prev + 1;
+        //   }
+        // });
+        await fetchBooksAPI();
+      } else return;
+    };
 
-      memoArr.forEach((data) => dispatch(createMemo(data)));
-    });
+    observer.current = new IntersectionObserver(onIntersect, options);
+    if (lastItemRef.current) {
+      observer.current.observe(lastItemRef.current);
+    }
+    return () => observer.current && observer.current.disconnect();
   });
 
-  const onSubmitHandler = useCallback(
-    async (e) => {
-      e.preventDefault();
-
-      if (memoInput.current.value === "") return;
-
-      try {
-        const newMemo = {
-          content: memoInput.current.value,
-          createdAt: new Date().toISOString().slice(0, 10),
-          creatorId: userInfo.uid,
-        };
-
-        const docRef = await addDoc(collection(dbService, "memo"), newMemo);
-
-        // console.log("Document written with ID: ", docRef.id);
-        dispatch(createMemo({ id: docRef.id, ...newMemo }));
-      } catch (err) {
-        console.error("Error adding document to database:", err);
-      }
-      memoInput.current.value = "";
-    },
-    [dispatch, userInfo.uid]
-  );
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  };
 
   return (
     <div>
-      <h2>Memos</h2>
-      <MemoForm onSubmit={onSubmitHandler}>
-        <input type="text" ref={memoInput} placeholder="Add memo"></input>
-        <SubmitButton type="submit" value="Add"></SubmitButton>
-      </MemoForm>
       <div>
-        <MemoListContainer>
-          {memosLength > 0
-            ? Object.keys(memos).map((key) => {
-                return (
-                  <Memo
-                    key={memos[key].id}
-                    memoObj={memos[key]}
-                    isOwner={memos[key].creatorId === userInfo.uid}
-                  />
-                );
-              })
-            : ""}
-        </MemoListContainer>
+        <h1>Library</h1>
+        <SearchBar onSubmit={onSubmitHandler}>
+          <input
+            id="keywordInput"
+            ref={keywordRef}
+            type="text"
+            placeholder="도서명, 작가명 또는 ISBN 코드를 입력해서 검색하세요"
+          />
+          <input id="searchButton" type="submit" value="검색" />
+        </SearchBar>
+        <SearchResultContainer id="books" style={{ border: "1px solid red" }}>
+          <ul>
+            {searchResult.map((item, i) => {
+              return i === searchResult.length - 1 && !loading ? (
+                <div ref={lastItemRef} key={item.isbn + Date.now()}>
+                  <SearchResult item={item} toggleModal={toggleModal} />
+                </div>
+              ) : (
+                <div key={item.isbn + Date.now()}>
+                  <SearchResult item={item} toggleModal={toggleModal} />
+                </div>
+              );
+            })}
+          </ul>
+        </SearchResultContainer>
+        {loading && <p>Loading...</p>}
+        {searchResult.length > 0 ? (
+          <div>
+            <button onClick={scrollToTop}>🔝 위로</button>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
+      {isOpen && <Modal toggleModal={toggleModal}>책꽂이 목록</Modal>}
     </div>
   );
 }
 
-const MemoForm = styled.form`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+const SearchBar = styled.form`
+  width: fit-content;
+  margin: 0 auto;
 
-  input:first-child {
-    width: 500px;
+  #keywordInput {
+    width: 550px;
     height: 40px;
+  }
+  #keywordInput:focus {
+    outline: none;
+  }
+
+  #searchButton {
+    width: 40px;
+    height: 40px;
+    margin-left: 20px;
   }
 `;
 
-const SubmitButton = styled.input`
-  width: 60px;
-  height: 35px;
-`;
-
-const MemoListContainer = styled.ul`
-  display: flex;
-  flex-direction: column;
-  // justify-content: center;
-  align-items: center;
-  padding: 40px;
-  margin: 100px;
+const SearchResultContainer = styled.section`
+  ul {
+    margin: 0 auto;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+  }
 `;
 
 export default React.memo(Home);

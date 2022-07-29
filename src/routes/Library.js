@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import SearchResult from "components/SearchResult";
 import axios from "axios";
 import styled from "styled-components";
+import Modal from "components/Modal";
 
 function Library(props) {
   const [loading, setLoading] = useState(false);
@@ -11,6 +12,18 @@ function Library(props) {
 
   const lastItemRef = useRef();
   const observer = useRef();
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsOpen((prev) => !prev);
+
+    if (document.body.style.overflow === "hidden") {
+      document.body.style.overflow = "auto";
+    } else {
+      document.body.style.overflow = "hidden";
+    }
+  };
 
   // 카카오 도서 검색 api 호출
   const fetchBooksAPI = async (isFirstFetch = false) => {
@@ -82,41 +95,44 @@ function Library(props) {
   };
 
   return (
-    <div>
-      <h1>Library</h1>
-      <SearchBar onSubmit={onSubmitHandler}>
-        <input
-          id="keywordInput"
-          ref={keywordRef}
-          type="text"
-          placeholder="도서명, 작가명 또는 ISBN 코드를 입력해서 검색하세요"
-        />
-        <input id="searchButton" type="submit" value="검색" />
-      </SearchBar>
-      <SearchResultContainer id="books" style={{ border: "1px solid red" }}>
-        <ul>
-          {searchResult.map((item, i) => {
-            return i === searchResult.length - 1 && !loading ? (
-              <div ref={lastItemRef} key={item.isbn + Date.now()}>
-                <SearchResult item={item} />
-              </div>
-            ) : (
-              <div key={item.isbn + Date.now()}>
-                <SearchResult item={item} />
-              </div>
-            );
-          })}
-        </ul>
-      </SearchResultContainer>
-      {loading && <p>Loading...</p>}
-      {searchResult.length > 0 ? (
-        <div>
-          <button onClick={scrollToTop}>🔝 위로</button>
-        </div>
-      ) : (
-        ""
-      )}
-    </div>
+    <>
+      <div>
+        <h1>Library</h1>
+        <SearchBar onSubmit={onSubmitHandler}>
+          <input
+            id="keywordInput"
+            ref={keywordRef}
+            type="text"
+            placeholder="도서명, 작가명 또는 ISBN 코드를 입력해서 검색하세요"
+          />
+          <input id="searchButton" type="submit" value="검색" />
+        </SearchBar>
+        <SearchResultContainer id="books" style={{ border: "1px solid red" }}>
+          <ul>
+            {searchResult.map((item, i) => {
+              return i === searchResult.length - 1 && !loading ? (
+                <div ref={lastItemRef} key={item.isbn + Date.now()}>
+                  <SearchResult item={item} toggleModal={toggleModal} />
+                </div>
+              ) : (
+                <div key={item.isbn + Date.now()}>
+                  <SearchResult item={item} toggleModal={toggleModal} />
+                </div>
+              );
+            })}
+          </ul>
+        </SearchResultContainer>
+        {loading && <p>Loading...</p>}
+        {searchResult.length > 0 ? (
+          <div>
+            <button onClick={scrollToTop}>🔝 위로</button>
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+      {isOpen && <Modal toggleModal={toggleModal}>책꽂이 목록</Modal>}
+    </>
   );
 }
 

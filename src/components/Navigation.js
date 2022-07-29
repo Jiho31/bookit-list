@@ -20,6 +20,9 @@ function Navigation() {
           <Link to="/library">My Library</Link>
         </li>
         <li>
+          <Link to="/notes">My Notes</Link>
+        </li>
+        <li>
           <button onClick={onClickHandler}>Logout</button>
         </li>
       </ul>

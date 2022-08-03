@@ -4,7 +4,6 @@ import styled from "styled-components";
 function Modal({ children, toggleModal, ...rest }) {
   const closeModalHandler = (e) => {
     toggleModal();
-    console.log("clicked");
   };
 
   const onModalClick = (e) => {
@@ -32,8 +31,8 @@ const Wrapper = styled.div`
 `;
 const ModalContainer = styled.div`
   z-index: 1;
-  width: 400px;
-  height: 400px;
+  width: ${(props) => (props.width ? props.width : "400px")};
+  height: ${(props) => (props.height ? props.height : "400px")};
   border-radius: 10px;
   background: #fff;
 

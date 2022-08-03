@@ -6,6 +6,8 @@ function Button({ children, ...rest }) {
 }
 
 const StyledButton = styled.button`
+  width: ${(props) => (props.width ? props.width : "auto")};
+  height: ${(props) => (props.height ? props.height : "auto")};
   padding: 10px;
   background-color: #6d8fad;
   color: #fff;

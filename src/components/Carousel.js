@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import styled, { keyframes } from "styled-components";
 import bookCoverSrc from "images/crazyrichasian.jpeg";
@@ -9,24 +9,24 @@ function Carousel(props) {
   const sliderRef = useRef();
 
   useEffect(() => {
-    console.log(slideIndex);
+    // console.log(slideIndex);
 
     sliderRef.current.style.transform = `translateX(calc(${slideIndex} * -1200px))`;
   }, [slideIndex, isTransitionEnabled]);
 
-  const prevBtnClickHandler = () => {
+  const prevBtnClickHandler = useCallback(() => {
     if (slideIndex === 0) return;
 
     setSlideIndex((prev) => prev - 1);
-  };
+  });
 
-  const nextBtnClickHandler = () => {
+  const nextBtnClickHandler = useCallback(() => {
     if (slideIndex === 2) return;
 
     setSlideIndex((prev) => prev + 1);
 
     // sliderRef.current.style.transition = isTransitionEnabled ? "all 0.25s linear" : "none";
-  };
+  });
 
   return (
     <Container>
@@ -49,8 +49,10 @@ function Carousel(props) {
           </Slide>
         </Slider>
       </Window>
-      <PrevButton onClick={prevBtnClickHandler}>이전</PrevButton>
-      <NextButton onClick={nextBtnClickHandler}>다음</NextButton>
+      <Buttons>
+        <PrevButton onClick={prevBtnClickHandler}>이전</PrevButton>
+        <NextButton onClick={nextBtnClickHandler}>다음</NextButton>
+      </Buttons>
     </Container>
   );
 }
@@ -72,9 +74,12 @@ const slideAnimation = keyframes`
 
 // CSS
 
+const Height = "400px";
+
 const Container = styled.section`
+  position: relative;
   width: 100vw;
-  height: 400px;
+  height: ${Height};
   background-color: #ebf7fd;
 `;
 
@@ -107,12 +112,26 @@ const Slide = styled.div`
   }
 `;
 
+const Buttons = styled.div`
+  display: flex;
+  width: 100vw;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  // z-index: 1;
+`;
+
 const PrevButton = styled(Button)`
-  transform: translateY(-400px);
+  transform: translateY(calc(${Height} / 2));
+  margin-left: 50px;
 `;
 
 const NextButton = styled(Button)`
-  transform: translateY(-450px);
+  transform: translateY(calc(${Height} / 2));
+  position: absolute;
+  right: 0;
+  margin-right: 50px;
 `;
 
-export default Carousel;
+export default React.memo(Carousel);

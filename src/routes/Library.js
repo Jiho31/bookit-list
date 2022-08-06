@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import Bookshelf from "components/Bookshelf";
 import Button from "components/Button";
@@ -13,8 +13,9 @@ import {
 import Carousel from "components/Carousel";
 import Modal from "components/Modal";
 
-function Library(props) {
+function Library({ userInfo }) {
   const [isOpen, setIsOpen] = useState(false);
+  const inputRef = useRef();
 
   const toggleModal = () => {
     setIsOpen((prev) => !prev);
@@ -32,7 +33,25 @@ function Library(props) {
     console.log("clicked");
   };
 
-  function addNewBookshelf() {}
+  function addNewBookshelf(e) {
+    e.preventDefault();
+
+    // 책꽂이 제목 input 값이 비어 있을 경우 리턴
+    if (inputRef.current.value === "") return;
+
+    // 리덕스 스토어에 데이터 저장
+    dispatch(
+      createBookshelf({
+        // id: cloud 에 bookshelf 컬렉션 생성 후 아이디 값 전달
+        creatorId: userInfo.uid,
+        name: inputRef.current.value,
+        createdAt: new Date().toISOString().slice(0, 10),
+        books: [],
+      })
+    );
+
+    // 💫💫💫💫💫💫💫💫💫💫💫💫💫 모달창 닫기 💫💫💫💫💫💫💫💫💫💫💫💫💫💫
+  }
 
   return (
     <>
@@ -49,11 +68,12 @@ function Library(props) {
           <BookshelfForm>
             <label htmlFor="newBookshelf">📚 새 책꽂이 만들기 📚</label>
             <input
+              ref={inputRef}
               id="newBookshelf"
               placeholder="책꽂이 이름 (15자 이내로 입력)"
             />
             <div id="buttonWrapper">
-              <Button width="55%" type="submit">
+              <Button width="55%" type="submit" onClick={addNewBookshelf}>
                 만들기
               </Button>
               <Button width="40%" onClick={toggleModal}>

@@ -1,19 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import Button from "./Button";
-import Modal from "./Modal";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateBookshelf,
-  removeBookshelf,
-  selectAllBookshelves,
-  selectBookshelvesEntities,
-} from "redux/bookshelves";
 
 function SearchResult({ item, toggleModal }) {
-  const dispatch = useDispatch();
-  const bookshelves = useSelector(selectBookshelvesEntities);
-
   return (
     <Item>
       <img src={item.thumbnail} alt={`${item.title} 표지`} />

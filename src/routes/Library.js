@@ -12,6 +12,7 @@ import {
 } from "redux/bookshelves";
 import Carousel from "components/Carousel";
 import Modal from "components/Modal";
+import { v4 as uuid } from "uuid";
 
 function Library({ userInfo }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +43,7 @@ function Library({ userInfo }) {
     // 리덕스 스토어에 데이터 저장
     dispatch(
       createBookshelf({
-        // id: cloud 에 bookshelf 컬렉션 생성 후 아이디 값 전달
+        id: uuid().slice(0, 8), // 유니크한 8자리 랜덤 id 생성 후 전달
         creatorId: userInfo.uid,
         name: inputRef.current.value,
         createdAt: new Date().toISOString().slice(0, 10),
@@ -54,10 +55,12 @@ function Library({ userInfo }) {
   }
 
   return (
-    <>
-      <Button onClick={toggleModal}>새 책꽂이</Button>
-      <Button onClick={clickEventHandler}>목록 편집</Button>
-      <Carousel />
+    <Container>
+      <ButtonWrapper>
+        <Button onClick={toggleModal}>새 책꽂이</Button>
+        <Button onClick={clickEventHandler}>목록 편집</Button>
+      </ButtonWrapper>
+      {/* <Carousel /> */}
       <Bookshelves>
         <Bookshelf />
         <Bookshelf />
@@ -83,9 +86,24 @@ function Library({ userInfo }) {
           </BookshelfForm>
         </Modal>
       )}
-    </>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  width: 100%;
+  padding: 0 calc((100vw - 950px) / 2);
+`;
+
+const ButtonWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+
+  button:first-child {
+    margin-right: 10px;
+  }
+`;
 
 const Bookshelves = styled.section`
   display: flex;

@@ -79,6 +79,7 @@ const GlobalStyle = createGlobalStyle`
   html {
     box-sizing: border-box;
     overflow-x: hidden;
+    background-color: #EBF7FD;
   }
   *,
   :after,

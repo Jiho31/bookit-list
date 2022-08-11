@@ -60,7 +60,6 @@ function Library({ userInfo }) {
         <Button onClick={toggleModal}>새 책꽂이</Button>
         <Button onClick={clickEventHandler}>목록 편집</Button>
       </ButtonWrapper>
-      {/* <Carousel /> */}
       <Bookshelves>
         <Bookshelf />
         <Bookshelf />
@@ -92,13 +91,13 @@ function Library({ userInfo }) {
 
 const Container = styled.div`
   width: 100%;
-  padding: 0 calc((100vw - 950px) / 2);
 `;
 
 const ButtonWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-end;
+  padding: 0 calc((100vw - 950px) / 2);
 
   button:first-child {
     margin-right: 10px;

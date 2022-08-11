@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Button from "./Button";
-import styled, { keyframes } from "styled-components";
-import bookCoverSrc from "images/crazyrichasian.jpeg";
+import styled from "styled-components";
 
-function Carousel(props) {
+// 캐러셀 크기 변수
+const Width = "950px"; // 캐러셀의 넓이
+const Height = "400px"; // 캐러셀의 높이
+const NumOfContents = 3; // 슬라이드 한 개에서 보이는 컨텐츠 개수
+
+function Carousel({ children }) {
   const [slideIndex, setSlideIndex] = useState(0);
   const [isTransitionEnabled, setIsTransitionEnabled] = useState(false);
   const sliderRef = useRef();
@@ -11,7 +15,7 @@ function Carousel(props) {
   useEffect(() => {
     // console.log(slideIndex);
 
-    sliderRef.current.style.transform = `translateX(calc(${slideIndex} * -1200px))`;
+    sliderRef.current.style.transform = `translateX(calc(${slideIndex} * -${Width}))`;
   }, [slideIndex, isTransitionEnabled]);
 
   const prevBtnClickHandler = useCallback(() => {
@@ -32,7 +36,8 @@ function Carousel(props) {
     <Container>
       <Window>
         <Slider ref={sliderRef}>
-          <Slide>
+          <Slide>{children}</Slide>
+          {/* <Slide>
             <img src={bookCoverSrc} alt="book cover" />
             <img src={bookCoverSrc} alt="book cover" />
             <img src={bookCoverSrc} alt="book cover" />
@@ -46,7 +51,7 @@ function Carousel(props) {
             <img src={bookCoverSrc} alt="book cover" />
             <img src={bookCoverSrc} alt="book cover" />
             <img src={bookCoverSrc} alt="book cover" />
-          </Slide>
+          </Slide> */}
         </Slider>
       </Window>
       <Buttons>
@@ -57,24 +62,7 @@ function Carousel(props) {
   );
 }
 
-// keyframes
-const slideAnimation = keyframes`
-  from {
-    transform: translateX(0);
-    background-color: red;
-  }
-  50% {
-    transform: translateX(-600px);
-  }
-  to {
-    transform: translateX(-1200px);
-    background-color: orange
-  }
-`;
-
 // CSS
-
-const Height = "400px";
 
 const Container = styled.section`
   position: relative;
@@ -84,32 +72,28 @@ const Container = styled.section`
 `;
 
 const Window = styled.div`
-  width: 1200px;
+  width: ${Width};
   height: auto;
-  margin: 0 auto;
+  margin: 0 calc((100vw - ${Width}) / 2);
+  overflow: hidden;
 `;
 
 const Slider = styled.div`
-  width: 3600px;
+  width: calc(${Width} * ${NumOfContents});
   height: auto;
   display: flex;
 
   transition: all 0.25s linear;
-
-  .slide {
-    // animation: 이름 | 시작지연시간 | 재생속도 | 재생시간 | 반복횟수 | 진행방향
-  }
 `;
 
 const Slide = styled.div`
-  width: 1200px;
+  width: ${Width};
   height: auto;
-  // background-color: green;
 
-  img {
+  /* img {
     width: 300px;
     margin: 0 50px;
-  }
+  } */
 `;
 
 const Buttons = styled.div`
@@ -119,7 +103,6 @@ const Buttons = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  // z-index: 1;
 `;
 
 const PrevButton = styled(Button)`

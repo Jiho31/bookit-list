@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import bookCoverSrc from "images/crazyrichasian.jpeg";
 
-function BookComponent() {
+function BookComponent({ width, height }) {
   const book = {
     id: 1,
     name: "Crazy Rich Asians",
@@ -11,7 +11,7 @@ function BookComponent() {
     coverImage: "",
   };
   return (
-    <Book>
+    <Book width={width} height={height}>
       <img src={bookCoverSrc} alt="book cover" />
       <Info>
         <h3>{book.name}</h3>
@@ -22,8 +22,8 @@ function BookComponent() {
 }
 
 const Book = styled.div`
-  width: 260px;
-  height: 320px;
+  width: ${(props) => (props.width ? props.width : "260px")};
+  height: ${(props) => (props.height ? props.height : "320px")};
   border: 1px solid #d9d9d9;
   border-radius: 10px;
   background-color: #fff;
@@ -47,12 +47,10 @@ const Info = styled.div`
 
   h3 {
     font-size: 22px;
-    /* line-height: 24px; */
   }
   div {
     margin-top: 5px;
     font-size: 16px;
-    /* line-height: 18px; */
   }
 `;
 

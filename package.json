@@ -42,5 +42,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://dapi.kakao.com"
+  "proxy": "https://dapi.kakao.com",
+  "devDependencies": {
+    "@iconify/react": "^3.2.2"
+  }
 }

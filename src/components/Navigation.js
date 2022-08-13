@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Icon } from "@iconify/react";
+import Button from "./Button";
 
 function Navigation() {
   const [activeTab, setActiveTab] = useState(1);
   const navigate = useNavigate();
+
   const onClickHandler = () => {
     authService.signOut();
     navigate("/");
@@ -55,7 +57,7 @@ function Navigation() {
           </Link>
         </li>
         <li>
-          <button onClick={onClickHandler}>Logout</button>
+          <Button onClick={onClickHandler}>Logout</Button>
         </li>
       </ul>
     </StyledNav>
@@ -70,7 +72,7 @@ const StyledNav = styled.nav`
     padding: 15px 0;
   }
   li {
-    height: 22px;
+    height: auto;
     font-size: 20px;
   }
   li:first-child {

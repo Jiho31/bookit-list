@@ -3,11 +3,13 @@ import styled from "styled-components";
 import SearchResult from "components/SearchResult";
 import axios from "axios";
 import Modal from "components/Modal";
+import { Icon } from "@iconify/react";
 
 function Home({ userInfo }) {
   const [loading, setLoading] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
   const [pageNum, setPageNum] = useState(0);
+  const [resultText, setResultText] = useState("");
   const keywordRef = useRef();
 
   const lastItemRef = useRef();
@@ -44,6 +46,9 @@ function Home({ userInfo }) {
       setSearchResult((prev) => [
         ...new Set([...prev, ...response.data.documents]),
       ]);
+      setResultText(
+        response.data.documents.length ? "검색 결과: " : "검색 결과가 없습니다"
+      );
       setLoading(false);
       setPageNum((prev) => prev + 1);
     } catch {
@@ -52,6 +57,11 @@ function Home({ userInfo }) {
   };
 
   // 도서 검색 버튼 클릭할 경우
+
+  const onButtonClickHandler = () => {
+    document.querySelector("#searchButton").click();
+  };
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -74,11 +84,6 @@ function Home({ userInfo }) {
     };
     const onIntersect = async (entries) => {
       if (entries[0].isIntersecting && pageNum <= 5) {
-        // setPageNum((prev) => {
-        //   if (prev < 4) {
-        //     return prev + 1;
-        //   }
-        // });
         await fetchBooksAPI();
       } else return;
     };
@@ -96,8 +101,7 @@ function Home({ userInfo }) {
 
   return (
     <div>
-      <div>
-        <h1>Library</h1>
+      <MainContent>
         <SearchBar onSubmit={onSubmitHandler}>
           <input
             id="keywordInput"
@@ -105,9 +109,13 @@ function Home({ userInfo }) {
             type="text"
             placeholder="도서명, 작가명 또는 ISBN 코드를 입력해서 검색하세요"
           />
-          <input id="searchButton" type="submit" value="검색" />
+          <SearchButton onClick={onButtonClickHandler}>
+            <input id="searchButton" type="submit" value="검색" />
+            <Icon icon="charm:search" />
+          </SearchButton>
         </SearchBar>
-        <SearchResultContainer id="books" style={{ border: "1px solid red" }}>
+        <SearchResultContainer id="books">
+          <h2>{searchResult.length ? "검색 결과: " : resultText}</h2>
           <ul>
             {searchResult.map((item, i) => {
               return i === searchResult.length - 1 && !loading ? (
@@ -130,32 +138,71 @@ function Home({ userInfo }) {
         ) : (
           ""
         )}
-      </div>
+      </MainContent>
       {isOpen && <Modal toggleModal={toggleModal}>책꽂이 목록</Modal>}
     </div>
   );
 }
 
+const MainContent = styled.main`
+  width: 100vw;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0 calc((100vw - 950px) / 2);
+`;
+
 const SearchBar = styled.form`
-  width: fit-content;
-  margin: 0 auto;
+  display: flex;
+  width: 70vw;
+  max-width: 950px;
+  height: 50px;
+  background-color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 22px;
+  margin: 20px auto;
 
   #keywordInput {
-    width: 550px;
-    height: 40px;
+    width: calc(70vw - 50px);
+    max-width: 900px;
+    height: auto;
+    border: none;
+
+    font-size: 16px;
+    color: #233142;
   }
   #keywordInput:focus {
     outline: none;
   }
+`;
 
-  #searchButton {
-    width: 40px;
-    height: 40px;
-    margin-left: 20px;
+const SearchButton = styled.button`
+  width: 30px;
+  height: 30px;
+  margin-left: 20px;
+  padding: 0 5px;
+
+  input {
+    display: none;
+  }
+  svg {
+    width: 100%;
+    height: 100%;
   }
 `;
 
 const SearchResultContainer = styled.section`
+  width: 70vw;
+  max-width: 950px;
+
+  h2 {
+    color: #233142;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    padding: 20px 0;
+  }
   ul {
     margin: 0 auto;
     width: 600px;

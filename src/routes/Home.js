@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import SearchResult from "components/SearchResult";
 import axios from "axios";
@@ -40,6 +40,8 @@ function Home({ userInfo }) {
       },
     };
 
+    console.log("Fetching API");
+
     try {
       setLoading(true);
       const response = await axios.get("/v3/search/book", options);
@@ -58,9 +60,12 @@ function Home({ userInfo }) {
 
   // 도서 검색 버튼 클릭할 경우
 
-  const onButtonClickHandler = () => {
-    document.querySelector("#searchButton").click();
-  };
+  const onButtonClickHandler = useCallback(() => {
+    // document.querySelector("#searchButton").click();
+    // document.querySelector("#searchBar").submit();
+    // keywordRef.current.submit();
+    onSubmitHandler();
+  });
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -102,7 +107,7 @@ function Home({ userInfo }) {
   return (
     <div>
       <MainContent>
-        <SearchBar onSubmit={onSubmitHandler}>
+        <SearchBar id="searchBar" onSubmit={onSubmitHandler}>
           <input
             id="keywordInput"
             ref={keywordRef}
@@ -149,6 +154,7 @@ const MainContent = styled.main`
   height: auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
   padding: 0 calc((100vw - 950px) / 2);
 `;
 
@@ -202,12 +208,6 @@ const SearchResultContainer = styled.section`
     font-weight: 600;
     text-align: center;
     padding: 20px 0;
-  }
-  ul {
-    margin: 0 auto;
-    width: 600px;
-    display: flex;
-    flex-direction: column;
   }
 `;
 

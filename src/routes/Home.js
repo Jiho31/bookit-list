@@ -4,13 +4,14 @@ import SearchResult from "components/SearchResult";
 import axios from "axios";
 import Modal from "components/Modal";
 import { Icon } from "@iconify/react";
+import { v4 as uuid } from "uuid";
 
 function Home({ userInfo }) {
   const [loading, setLoading] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
-  const [pageNum, setPageNum] = useState(0);
   const [resultText, setResultText] = useState("");
   const keywordRef = useRef();
+  const pageNum = useRef(1);
 
   const lastItemRef = useRef();
   const observer = useRef();
@@ -27,70 +28,79 @@ function Home({ userInfo }) {
     }
   };
 
+  const fetchAndUpdateResult = useCallback((data, isFirstFetch = false) => {
+    // 검색 결과 리스트 업데이트
+    setSearchResult((prev) => {
+      if (isFirstFetch) return [...data];
+
+      const newResult = [...prev];
+
+      data.forEach((obj) => {
+        const { isbn } = obj;
+
+        if (prev.filter((x) => x.isbn === isbn).length === 0) {
+          newResult.push(obj);
+        }
+      });
+
+      return newResult;
+    });
+
+    // 검색 결과 안내 문구 업데이트
+    setResultText(data.length ? "검색 결과: " : "검색 결과가 없습니다");
+
+    // 페이지 인덱스 번호 업데이트
+    pageNum.current += 1;
+  });
+
   // 카카오 도서 검색 api 호출
-  const fetchBooksAPI = async (isFirstFetch = false) => {
+  const fetchBooksAPI = useCallback(async () => {
     const options = {
       params: {
         query: keywordRef.current.value,
-        page: isFirstFetch ? 1 : pageNum + 1,
-        size: 15, // default = 10
+        page: pageNum.current,
+        size: 10, // default = 10
       },
       headers: {
         Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_AK}`,
       },
     };
 
-    console.log("Fetching API");
-
     try {
       setLoading(true);
       const response = await axios.get("/v3/search/book", options);
-      setSearchResult((prev) => [
-        ...new Set([...prev, ...response.data.documents]),
-      ]);
-      setResultText(
-        response.data.documents.length ? "검색 결과: " : "검색 결과가 없습니다"
-      );
       setLoading(false);
-      setPageNum((prev) => prev + 1);
+      return response.data.documents;
     } catch {
       console.error("fetching error ⚠️");
     }
-  };
-
-  // 도서 검색 버튼 클릭할 경우
-
-  const onButtonClickHandler = useCallback(() => {
-    // document.querySelector("#searchButton").click();
-    // document.querySelector("#searchBar").submit();
-    // keywordRef.current.submit();
-    onSubmitHandler();
   });
 
+  // 도서 검색 버튼 클릭할 경우
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
-    // 도서 검색 결과 빈 배열로 초기화
-    setPageNum(0);
-    setSearchResult([]);
+    pageNum.current = 1;
 
     if (!keywordRef.current.value) return;
 
     // 도서 검색 api 호출
-    await fetchBooksAPI(true);
+    const data = await fetchBooksAPI(true);
+    fetchAndUpdateResult(data, true);
   };
 
   // Intersection Observer 설정
   useEffect(() => {
     const options = {
-      root: document,
-      rootMargin: "-20px",
+      root: null,
+      rootMargin: "0px",
       threshold: 0.5,
     };
     const onIntersect = async (entries) => {
-      if (entries[0].isIntersecting && pageNum <= 5) {
-        await fetchBooksAPI();
-      } else return;
+      if (entries[0].isIntersecting && pageNum.current <= 8) {
+        const data = await fetchBooksAPI();
+        fetchAndUpdateResult(data);
+      }
     };
 
     observer.current = new IntersectionObserver(onIntersect, options);
@@ -98,7 +108,7 @@ function Home({ userInfo }) {
       observer.current.observe(lastItemRef.current);
     }
     return () => observer.current && observer.current.disconnect();
-  });
+  }, [fetchBooksAPI, lastItemRef]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
@@ -114,7 +124,7 @@ function Home({ userInfo }) {
             type="text"
             placeholder="도서명, 작가명 또는 ISBN 코드를 입력해서 검색하세요"
           />
-          <SearchButton onClick={onButtonClickHandler}>
+          <SearchButton onClick={onSubmitHandler}>
             <input id="searchButton" type="submit" value="검색" />
             <Icon icon="charm:search" />
           </SearchButton>
@@ -123,12 +133,12 @@ function Home({ userInfo }) {
           <h2>{searchResult.length ? "검색 결과: " : resultText}</h2>
           <ul>
             {searchResult.map((item, i) => {
-              return i === searchResult.length - 1 && !loading ? (
-                <div ref={lastItemRef} key={item.isbn + Date.now()}>
+              return i === searchResult.length - 1 ? (
+                <div ref={lastItemRef} key={uuid()}>
                   <SearchResult item={item} toggleModal={toggleModal} />
                 </div>
               ) : (
-                <div key={item.isbn + Date.now()}>
+                <div key={uuid()}>
                   <SearchResult item={item} toggleModal={toggleModal} />
                 </div>
               );

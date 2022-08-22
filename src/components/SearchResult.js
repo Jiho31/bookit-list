@@ -40,7 +40,8 @@ function SearchResult({ item, toggleModal }) {
 }
 
 const Item = styled.li`
-  width: 60vw;
+  /* width: 60vw; */
+  width: auto;
   max-width: inherit;
   height: 320px;
   max-height: 320px;

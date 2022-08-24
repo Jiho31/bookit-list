@@ -39,10 +39,12 @@ const Memo = React.memo(function Memo({ memoObj, isOwner }) {
     }
     toggleEditing();
 
+    // firebase에 저장된 데이터 업데이트
     await updateDoc(memoDocRef, {
       content: newContent,
     });
 
+    // 리덕스 데이터 갱신
     dispatch(updateMemo({ ...memos[memoObj.id], content: newContent }));
   };
 

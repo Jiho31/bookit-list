@@ -22,7 +22,7 @@ function Navigation() {
       case "/library":
         setActiveTab(2);
         break;
-      case "/notes":
+      case "/memos":
         setActiveTab(3);
         break;
       default:
@@ -51,9 +51,9 @@ function Navigation() {
           </Link>
         </li>
         <li className={activeTab === 3 ? "active" : ""}>
-          <Link to="/notes">
+          <Link to="/memos">
             <Icon icon="fa-solid:pen" />
-            Notes
+            Memos
           </Link>
         </li>
         <li>

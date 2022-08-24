@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import Memo from "components/Memo";
+import Memo from "components/MemoComponent";
 import styled from "styled-components";
 import { dbService } from "fbase";
 import {
@@ -16,7 +16,7 @@ import {
   selectMemosEntities,
 } from "../redux/memos";
 
-function Notes({ userInfo }) {
+function Memos({ userInfo }) {
   const memoInput = useRef();
   const memos = useSelector(selectMemosEntities);
   const memosLength = useSelector(selectMemosLength);
@@ -74,6 +74,7 @@ function Notes({ userInfo }) {
         <MemoListContainer>
           {memosLength > 0
             ? Object.keys(memos).map((key) => {
+                console.log(key);
                 return (
                   <Memo
                     key={memos[key].id}
@@ -114,4 +115,4 @@ const MemoListContainer = styled.ul`
   margin: 100px;
 `;
 
-export default React.memo(Notes);
+export default React.memo(Memos);

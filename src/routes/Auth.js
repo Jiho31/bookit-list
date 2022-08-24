@@ -7,12 +7,16 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
+import { addUserInfo } from "redux/users";
+import { useDispatch } from "react-redux";
 
 function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newAccount, setNewAccount] = useState(true);
   const [error, setError] = useState("");
+
+  const dispatch = useDispatch();
 
   const onChangeHandler = (e) => {
     const {
@@ -49,6 +53,45 @@ function Auth() {
   };
 
   const toggleAccount = () => setNewAccount((prev) => !prev);
+
+  const addUsers = (userId) => {
+    const userObj = {
+      id: userId,
+      bookshelves: [],
+      memos: [],
+    };
+
+    // check if user object exists in local storage (later change to database)
+    // and add newly logged in user info
+    if (localStorage.getItem("bookitListUsers")) {
+      const { ids, entities } = JSON.parse(
+        localStorage.getItem("bookitListUser")
+      );
+
+      localStorage.setItem(
+        "bookitListUsers",
+        JSON.stringify({
+          ids: [...ids, userId],
+          entities: {
+            ...entities,
+            userObj,
+          },
+        })
+      );
+    } else {
+      const users = {
+        ids: [userId],
+        entities: {
+          userObj,
+        },
+      };
+      localStorage.setItem("bookitListUsers", JSON.stringify(users));
+    }
+
+    // add user object to redux store
+    dispatch(addUserInfo(userObj));
+  };
+
   const onSocialClick = async (e) => {
     const {
       target: { name },
@@ -62,7 +105,12 @@ function Auth() {
     }
     console.log(provider);
     const data = await signInWithPopup(authService, provider);
-    console.log(data);
+    console.log(data); // data.user.uid
+
+    // firebase에서 users 컬렉션 불러와서 아이디 추가
+
+    // redux 스토어에 users 객체 생성
+    addUsers(data.user.uid);
   };
 
   return (

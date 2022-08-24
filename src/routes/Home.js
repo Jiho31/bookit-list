@@ -6,6 +6,9 @@ import Modal from "components/Modal";
 import { Icon } from "@iconify/react";
 import { v4 as uuid } from "uuid";
 
+const PROXY =
+  window.location.hostname === "localhost" ? "/v3/search/book" : "/proxy";
+
 function Home({ userInfo }) {
   const [loading, setLoading] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
@@ -68,7 +71,7 @@ function Home({ userInfo }) {
 
     try {
       setLoading(true);
-      const response = await axios.get("/v3/search/book", options);
+      const response = await axios.get(`${PROXY}`, options);
       setLoading(false);
       return response.data.documents;
     } catch {

@@ -7,7 +7,9 @@ import { Icon } from "@iconify/react";
 import { v4 as uuid } from "uuid";
 
 const PROXY =
-  window.location.hostname === "localhost" ? "/v3/search/book" : "/proxy";
+  window.location.hostname === "localhost"
+    ? "/v3/search/book"
+    : "/proxy/v3/search/book";
 
 function Home({ userInfo }) {
   const [loading, setLoading] = useState(false);
@@ -74,8 +76,9 @@ function Home({ userInfo }) {
       const response = await axios.get(`${PROXY}`, options);
       setLoading(false);
       return response.data.documents;
-    } catch {
-      console.error("fetching error ⚠️");
+    } catch (err) {
+      throw new Error(err);
+      // console.error("fetching error ⚠️");
     }
   });
 

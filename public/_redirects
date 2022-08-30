@@ -1,0 +1,2 @@
+/proxy/*  https://dapi.kakao.com/v3/search/book/:splat  200
+/*  /index.html 200

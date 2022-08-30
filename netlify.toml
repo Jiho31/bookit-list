@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/proxy/*"
+  from = "https://bookit-list.netlify.app/proxy/*"
   to = "https://dapi.kakao.com/v3/search/book/:splat"
   status = 200
   force = true

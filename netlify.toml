@@ -1,9 +1,6 @@
 [[redirects]]
   from = "/proxy/*"
-  to = "https://dapi.kakao.com"
+  to = "https://dapi.kakao.com/:splat"
   status = 200
   force = true
-  headers = {
-    Access-Control-Allow-Origin = "*"
-    X-from = "Netlify"
-  }
+  headers = {Access-Control-Allow-Origin = "*"}

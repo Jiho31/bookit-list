@@ -1,2 +1,0 @@
-/proxy/*  https://dapi.kakao.com/:splat  200
-/*  /index.html 200

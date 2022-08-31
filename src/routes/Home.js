@@ -7,7 +7,9 @@ import { Icon } from "@iconify/react";
 import { v4 as uuid } from "uuid";
 
 const PROXY =
-  window.location.hostname === "localhost" ? "/v3/search/book" : "/proxy";
+  window.location.hostname === "localhost"
+    ? "/v3/search/book"
+    : "/proxy/v3/search/book";
 
 function Home({ userInfo }) {
   const [loading, setLoading] = useState(false);

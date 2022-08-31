@@ -5,7 +5,7 @@
   force = true
 
 [[headers]]
-  for = "/proxy/*
+  for = "/proxy/*"
   [headers.values]
     Access-Control-Allow-Origin: "https://dapi.kakao.com/v3/search/book/:splat"
     Access-Control-Allow-Credentials: true

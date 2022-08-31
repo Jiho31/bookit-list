@@ -3,10 +3,3 @@
   to = "https://dapi.kakao.com/:splat"
   status = 200
   force = true
-
-[[headers]]
-  for = "/proxy/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "https://dapi.kakao.com/:splat"
-    Access-Control-Allow-Credentials = true
-    

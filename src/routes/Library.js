@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Bookshelf from "components/Bookshelf";
 import Button from "components/Button";
@@ -10,8 +10,9 @@ import {
   selectAllBookshelves,
   selectBookshelvesEntities,
 } from "redux/bookshelves";
-import Carousel from "components/Carousel";
 import Modal from "components/Modal";
+import { dbService } from "fbase";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import { v4 as uuid } from "uuid";
 
 function Library({ userInfo }) {
@@ -34,25 +35,44 @@ function Library({ userInfo }) {
     console.log("clicked");
   };
 
-  function addNewBookshelf(e) {
+  async function addNewBookshelf(e) {
     e.preventDefault();
 
     // 책꽂이 제목 input 값이 비어 있을 경우 리턴
     if (inputRef.current.value === "") return;
 
-    // 리덕스 스토어에 데이터 저장
-    dispatch(
-      createBookshelf({
-        id: uuid().slice(0, 8), // 유니크한 8자리 랜덤 id 생성 후 전달
-        creatorId: userInfo.uid,
-        name: inputRef.current.value,
-        createdAt: new Date().toISOString().slice(0, 10),
-        books: [],
-      })
+    const newBookshelf = {
+      creatorId: userInfo.uid,
+      name: inputRef.current.value,
+      createdAt: new Date().toISOString().slice(0, 10),
+      books: {},
+    };
+
+    // firestore에 bookshelf 생성
+    const docRef = await addDoc(
+      collection(dbService, "bookshelves"),
+      newBookshelf
     );
 
+    // 리덕스 스토어에 데이터 저장
+    dispatch(createBookshelf({ id: docRef.id, ...newBookshelf }));
+
     // 💫💫💫💫💫💫💫💫💫💫💫💫💫 모달창 닫기 💫💫💫💫💫💫💫💫💫💫💫💫💫💫
+    toggleModal();
   }
+
+  // firestore에서 bookshelves 컬렉션 읽어와서 저장
+  useEffect(() => {
+    async function getBookshelfData() {
+      const querySnapshot = await getDocs(collection(dbService, "bookshelves"));
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      });
+    }
+
+    getBookshelfData();
+  }, []);
 
   return (
     <Container>

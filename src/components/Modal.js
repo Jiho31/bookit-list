@@ -28,9 +28,10 @@ const Wrapper = styled.div`
   top: 0;
   left: 0;
   overflow: hidden;
+  z-index: 10;
 `;
 const ModalContainer = styled.div`
-  z-index: 1;
+  z-index: 10;
   width: ${(props) => (props.width ? props.width : "400px")};
   height: ${(props) => (props.height ? props.height : "400px")};
   border-radius: 10px;

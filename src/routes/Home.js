@@ -4,6 +4,7 @@ import SearchResult from "components/SearchResult";
 import axios from "axios";
 import Modal from "components/Modal";
 import SelectBookshelfList from "components/SelectBookshelfList";
+import Button from "components/Button";
 import { Icon } from "@iconify/react";
 import { v4 as uuid } from "uuid";
 
@@ -154,9 +155,11 @@ function Home({ userInfo }) {
         </SearchResultContainer>
         {loading && <p>Loading...</p>}
         {searchResult.length > 0 ? (
-          <div>
-            <button onClick={scrollToTop}>🔝 위로</button>
-          </div>
+          <ScrollToTopButton>
+            <Button onClick={scrollToTop}>
+              <Icon icon="fa:arrow-up" />
+            </Button>
+          </ScrollToTopButton>
         ) : (
           ""
         )}
@@ -191,7 +194,7 @@ const SearchBar = styled.form`
   margin: 20px auto;
 
   #keywordInput {
-    width: calc(70vw - 50px);
+    width: calc(70vw - 90px);
     max-width: 900px;
     height: auto;
     border: none;
@@ -204,11 +207,13 @@ const SearchBar = styled.form`
   }
 `;
 
-const SearchButton = styled.button`
-  width: 30px;
-  height: 30px;
-  margin-left: 20px;
-  padding: 0 5px;
+const SearchButton = styled(Button)`
+  width: 32px;
+  height: 32px;
+  margin-left: 30px;
+  padding: 0 4px;
+  color: inherit;
+  background-color: #fff;
 
   input {
     display: none;
@@ -230,6 +235,13 @@ const SearchResultContainer = styled.section`
     text-align: center;
     padding: 20px 0;
   }
+`;
+
+const ScrollToTopButton = styled.div`
+  z-index: 1;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
 `;
 
 export default React.memo(Home);

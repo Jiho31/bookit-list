@@ -68,7 +68,11 @@ function Memos({ userInfo }) {
       <h2>Memos</h2>
       <MemoForm onSubmit={onSubmitHandler}>
         <input type="text" ref={memoInput} placeholder="Add memo"></input>
-        <SubmitButton type="submit" value="Add"></SubmitButton>
+        <SubmitButton
+          type="submit"
+          value="Add"
+          aria-label="메모 추가하기"
+        ></SubmitButton>
       </MemoForm>
       <div>
         <MemoListContainer>

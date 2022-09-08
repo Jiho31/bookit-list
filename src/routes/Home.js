@@ -133,7 +133,12 @@ function Home({ userInfo }) {
             placeholder="도서명, 작가명 또는 ISBN 코드를 입력해서 검색하세요"
           />
           <SearchButton onClick={onSubmitHandler}>
-            <input id="searchButton" type="submit" value="검색" />
+            <input
+              id="searchButton"
+              type="submit"
+              value="검색"
+              alt="도서 검색하기"
+            />
             <Icon icon="charm:search" />
           </SearchButton>
         </SearchBar>
@@ -156,7 +161,11 @@ function Home({ userInfo }) {
         {loading && <p>Loading...</p>}
         {searchResult.length > 0 ? (
           <ScrollToTopButton>
-            <Button onClick={scrollToTop}>
+            <Button
+              aria-label="scroll to top"
+              title="Scroll to top"
+              onClick={scrollToTop}
+            >
               <Icon icon="fa:arrow-up" />
             </Button>
           </ScrollToTopButton>

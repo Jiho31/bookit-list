@@ -57,7 +57,9 @@ function Navigation() {
           </Link>
         </li>
         <li>
-          <Button onClick={onClickHandler}>Logout</Button>
+          <Button aria-label="로그아웃" onClick={onClickHandler}>
+            로그아웃
+          </Button>
         </li>
       </ul>
     </StyledNav>

@@ -32,7 +32,9 @@ function SearchResult({ item, toggleModal }) {
           </button>
         </div>
         <div>
-          <Button onClick={toggleModal}>책꽂이에 담기</Button>
+          <Button aria-label="Add to Bookshelf" onClick={toggleModal}>
+            책꽂이에 담기
+          </Button>
         </div>
       </div>
     </Item>

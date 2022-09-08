@@ -77,8 +77,20 @@ function Library({ userInfo }) {
   return (
     <Container>
       <ButtonWrapper>
-        <Button onClick={toggleModal}>새 책꽂이</Button>
-        <Button onClick={clickEventHandler}>목록 편집</Button>
+        <Button
+          aria-label="새 책꽂이 만들기"
+          title="새 책꽂이 만들기"
+          onClick={toggleModal}
+        >
+          새 책꽂이
+        </Button>
+        <Button
+          aria-label="목록 편집하기"
+          title="목록 편집하기"
+          onClick={clickEventHandler}
+        >
+          목록 편집
+        </Button>
       </ButtonWrapper>
       <Bookshelves>
         <Bookshelf />
@@ -95,10 +107,19 @@ function Library({ userInfo }) {
               placeholder="책꽂이 이름 (15자 이내로 입력)"
             />
             <div id="buttonWrapper">
-              <Button width="55%" type="submit" onClick={addNewBookshelf}>
+              <Button
+                aria-label="책꽂이 만들기 폼 제출"
+                width="55%"
+                type="submit"
+                onClick={addNewBookshelf}
+              >
                 만들기
               </Button>
-              <Button width="40%" onClick={toggleModal}>
+              <Button
+                aria-label="새 책꽂이 모달 닫기"
+                width="40%"
+                onClick={toggleModal}
+              >
                 취소
               </Button>
             </div>

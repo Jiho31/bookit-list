@@ -3,6 +3,7 @@ import styled from "styled-components";
 import SearchResult from "components/SearchResult";
 import axios from "axios";
 import Modal from "components/Modal";
+import SelectBookshelfList from "components/SelectBookshelfList";
 import { Icon } from "@iconify/react";
 import { v4 as uuid } from "uuid";
 
@@ -160,7 +161,11 @@ function Home({ userInfo }) {
           ""
         )}
       </MainContent>
-      {isOpen && <Modal toggleModal={toggleModal}>책꽂이 목록</Modal>}
+      {isOpen && (
+        <Modal width="300px" height="auto" toggleModal={toggleModal}>
+          <SelectBookshelfList closeModal={toggleModal} />
+        </Modal>
+      )}
     </div>
   );
 }

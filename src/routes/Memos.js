@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import Memo from "components/MemoComponent";
+import Button from "components/Button";
 import styled from "styled-components";
 import { dbService } from "fbase";
 import {
@@ -41,6 +42,7 @@ function Memos({ userInfo }) {
   const onSubmitHandler = useCallback(
     async (e) => {
       e.preventDefault();
+      // console.log("clicked");
 
       if (memoInput.current.value === "") return;
 
@@ -65,14 +67,11 @@ function Memos({ userInfo }) {
 
   return (
     <div>
-      <h2>Memos</h2>
       <MemoForm onSubmit={onSubmitHandler}>
-        <input type="text" ref={memoInput} placeholder="Add memo"></input>
-        <SubmitButton
-          type="submit"
-          value="Add"
-          aria-label="메모 추가하기"
-        ></SubmitButton>
+        <input type="text" ref={memoInput} placeholder="새 메모를 입력하세요" />
+        <SubmitButton type="submit" aria-label="메모 등록하기">
+          메모 등록
+        </SubmitButton>
       </MemoForm>
       <div>
         <MemoListContainer>
@@ -97,17 +96,25 @@ function Memos({ userInfo }) {
 const MemoForm = styled.form`
   display: flex;
   align-items: center;
-  flex-direction: column;
+  justify-content: center;
+  flex-direction: row;
 
   input:first-child {
-    width: 500px;
-    height: 40px;
+    padding: 10px;
+    width: 600px;
+    height: 70px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 16px;
   }
 `;
 
-const SubmitButton = styled.input`
-  width: 60px;
-  height: 35px;
+const SubmitButton = styled(Button)`
+  width: 75px;
+  height: 45px;
+  margin-left: 10px;
+  font-weight: 500;
+  font-size: 14px; ;
 `;
 
 const MemoListContainer = styled.ul`

@@ -4,6 +4,8 @@ import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateMemo, removeMemo, selectMemosEntities } from "redux/memos";
 import styled from "styled-components";
+import { Icon } from "@iconify/react";
+import Button from "./Button";
 
 const Memo = React.memo(function Memo({ memoObj, isOwner }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -60,15 +62,29 @@ const Memo = React.memo(function Memo({ memoObj, isOwner }) {
           <input type="submit" value="Save Memo"></input>
         </form>
       ) : (
-        <>
-          <h3>{memos[memoObj.id].content}</h3>
+        <MemoWrapper>
+          <p>{memos[memoObj.id].content}</p>
+          <EditButton
+            backgroundColor="#fff"
+            width="32px"
+            height="32px"
+            padding="0"
+          >
+            <Icon
+              title="메모 편집"
+              icon="carbon:overflow-menu-horizontal"
+              color="#6D8FAD"
+              width="26px"
+              height="26px"
+            />
+          </EditButton>
           {isOwner && (
             <>
               <button onClick={onDeleteClick}>Delete</button>
               <button onClick={onEditClick}>Edit</button>
             </>
           )}
-        </>
+        </MemoWrapper>
       )}
     </StyledMemo>
   );
@@ -76,9 +92,21 @@ const Memo = React.memo(function Memo({ memoObj, isOwner }) {
 
 const StyledMemo = styled.li`
   width: 80%;
-  border: 3px solid pink;
+  /* border: 3px solid pink; */
+  background-color: #fff;
+  border-radius: 0 20px 0 20px;
   padding: 20px;
   margin: 5px;
+`;
+
+const MemoWrapper = styled.div`
+  position: relative;
+`;
+
+const EditButton = styled(Button)`
+  position: absolute;
+  top: 0px;
+  right: 0px;
 `;
 
 export default Memo;

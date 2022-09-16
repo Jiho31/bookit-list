@@ -17,6 +17,10 @@ import { v4 as uuid } from "uuid";
 
 function Library({ userInfo }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [bookshelves, setBookshelves] = useState(
+    JSON.parse(localStorage.getItem("bookshelves"))
+  );
+  // const bookshelves = useSelector(selectBookshelvesEntities);
   const inputRef = useRef();
 
   const toggleModal = () => {
@@ -29,7 +33,6 @@ function Library({ userInfo }) {
     }
   };
   const dispatch = useDispatch();
-  const bookshelves = useSelector(selectBookshelvesEntities);
 
   const clickEventHandler = () => {
     console.log("clicked");
@@ -48,19 +51,46 @@ function Library({ userInfo }) {
       books: {},
     };
 
+    // 🔥🔥🔥🔥🔥🔥 Firestore 업데이트 잠시 멈춤 🔥🔥🔥🔥🔥🔥
     // firestore에 bookshelf 생성
+    /*
     const docRef = await addDoc(
       collection(dbService, "bookshelves"),
       newBookshelf
     );
 
-    // 리덕스 스토어에 데이터 저장
-    dispatch(createBookshelf({ id: docRef.id, ...newBookshelf }));
+    const { id: bookshelfID } = docRef;
+    */
+    const bookshelfID = uuid();
 
-    // 💫💫💫💫💫💫💫💫💫💫💫💫💫 모달창 닫기 💫💫💫💫💫💫💫💫💫💫💫💫💫💫
+    // 리덕스 스토어에 데이터 저장
+    dispatch(createBookshelf({ id: bookshelfID, ...newBookshelf }));
+
+    // 로컬 스토리지에 저장
+    if (localStorage.getItem("bookshelves")) {
+      const localBookshelf = JSON.parse(localStorage.getItem("bookshelves"));
+      localBookshelf[bookshelfID] = newBookshelf;
+
+      localStorage.setItem("bookshelves", JSON.stringify(localBookshelf));
+    } else {
+      const newStorage = {};
+      newStorage[bookshelfID] = newBookshelf;
+      localStorage.setItem("bookshelves", JSON.stringify(newStorage));
+    }
+
+    // 모달창 닫기
     toggleModal();
+
+    // bookshelves 상태 값 업데이트
+    setBookshelves((prevState) => {
+      const newState = Object.assign({}, JSON.parse(JSON.stringify(prevState)));
+      newState[bookshelfID] = newBookshelf;
+      return newState;
+    });
   }
 
+  // 🔥🔥🔥🔥🔥🔥 Firestore 업데이트 잠시 멈춤 🔥🔥🔥🔥🔥🔥
+  /*
   // firestore에서 bookshelves 컬렉션 읽어와서 저장
   useEffect(() => {
     async function getBookshelfData() {
@@ -72,7 +102,10 @@ function Library({ userInfo }) {
     }
 
     getBookshelfData();
+
+    // 💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫 받아온 bookshelf 목록으로 렌더링 하기 💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫💫
   }, []);
+  */
 
   return (
     <Container>
@@ -93,9 +126,20 @@ function Library({ userInfo }) {
         </Button>
       </ButtonWrapper>
       <Bookshelves>
+        {/* <Bookshelf />
         <Bookshelf />
-        <Bookshelf />
-        <Bookshelf />
+        <Bookshelf /> */}
+        {Object.keys(bookshelves).map((id) => {
+          // console.log(bookshelves[id]);
+          const shelf = bookshelves[id];
+          return (
+            <Bookshelf
+              key={id}
+              shelf={shelf}
+              numOfBooks={Object.keys(shelf.books).length}
+            />
+          );
+        })}
       </Bookshelves>
       {isOpen && (
         <Modal toggleModal={toggleModal} width="auto" height="auto">

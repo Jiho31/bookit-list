@@ -1,65 +1,30 @@
 import React from "react";
 import styled from "styled-components";
+import { v4 as uuid } from "uuid";
 import BookComponent from "./BookComponent";
 import Carousel from "./Carousel";
 
-function Bookshelf(props) {
-  // bookshelf id 를 입력 받고 리덕스 스토어에서 검색해서 가져오면 되나?
-  // 아님 props로 전달 받아야 되나?
-  const book = {
-    id: 1,
-    name: "Crazy Rich Asians",
-    author: "Kevin Kwan",
-    publisher: "Penguins ",
-    coverImage: "",
-  };
-
-  const shelf = {
-    id: 1,
-    name: "Books I've Read",
-    books: [book, book, book, book, book], // book id ? 아님 ✨✨객체를 통째로✨✨ 저장?
-    numOfBooks: 0,
-  };
+function Bookshelf({ shelf, numOfBooks }) {
   return (
     <StyledShelf>
       <h2>
-        {shelf.name} ({shelf.numOfBooks})
+        {shelf.name} ({numOfBooks})
       </h2>
       <Carousel>
         <ul>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
-          <li>
-            <BookComponent />
-          </li>
+          {numOfBooks > 0 ? (
+            Object.keys(shelf.books).map((id) => {
+              return (
+                <li key={uuid()}>
+                  <BookComponent book={shelf.books[id]} />
+                </li>
+              );
+            })
+          ) : (
+            <div>
+              책꽂이가 비어 있습니다. 책을 검색해서 책꽂이에 책을 추가해보세요.{" "}
+            </div>
+          )}
         </ul>
       </Carousel>
     </StyledShelf>

@@ -1,20 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import bookCoverSrc from "images/crazyrichasian.jpeg";
 
-function BookComponent({ width, height }) {
-  const book = {
-    id: 1,
-    name: "Crazy Rich Asians",
-    author: "Kevin Kwan",
-    publisher: "Penguins ",
-    coverImage: "",
-  };
+function BookComponent({ book, width, height }) {
   return (
     <Book width={width} height={height}>
-      <img src={bookCoverSrc} alt="book cover" />
+      <img src={book.thumbnail} alt={`${book.title}의 표지`} />
       <Info>
-        <h3>{book.name}</h3>
+        <h3>{book.title}</h3>
         <div>{book.author}</div>
       </Info>
     </Book>

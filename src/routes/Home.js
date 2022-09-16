@@ -25,7 +25,9 @@ function Home({ userInfo }) {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleModal = () => {
+  const targetRef = useRef();
+
+  const toggleModal = useCallback(() => {
     setIsOpen((prev) => !prev);
 
     if (document.body.style.overflow === "hidden") {
@@ -33,7 +35,15 @@ function Home({ userInfo }) {
     } else {
       document.body.style.overflow = "hidden";
     }
-  };
+  }, [setIsOpen]);
+
+  // 클릭된 책 아이디를 ref 값으로 저장
+  const setTarget = useCallback(
+    (targetID) => {
+      targetRef.current = targetID;
+    },
+    [targetRef]
+  );
 
   const fetchAndUpdateResult = useCallback((data, isFirstFetch = false) => {
     // 검색 결과 리스트 업데이트
@@ -58,7 +68,7 @@ function Home({ userInfo }) {
 
     // 페이지 인덱스 번호 업데이트
     pageNum.current += 1;
-  });
+  }, []);
 
   // 카카오 도서 검색 api 호출
   const fetchBooksAPI = useCallback(async () => {
@@ -118,9 +128,9 @@ function Home({ userInfo }) {
     return () => observer.current && observer.current.disconnect();
   }, [fetchBooksAPI, lastItemRef]);
 
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-  };
+  }, []);
 
   return (
     <div>
@@ -148,11 +158,19 @@ function Home({ userInfo }) {
             {searchResult.map((item, i) => {
               return i === searchResult.length - 1 ? (
                 <div ref={lastItemRef} key={uuid()}>
-                  <SearchResult item={item} toggleModal={toggleModal} />
+                  <SearchResult
+                    item={item}
+                    toggleModal={toggleModal}
+                    setTarget={setTarget}
+                  />
                 </div>
               ) : (
                 <div key={uuid()}>
-                  <SearchResult item={item} toggleModal={toggleModal} />
+                  <SearchResult
+                    item={item}
+                    toggleModal={toggleModal}
+                    setTarget={setTarget}
+                  />
                 </div>
               );
             })}
@@ -165,8 +183,9 @@ function Home({ userInfo }) {
               aria-label="scroll to top"
               title="Scroll to top"
               onClick={scrollToTop}
+              padding="4px"
             >
-              <Icon icon="fa:arrow-up" />
+              <Icon icon="bx:arrow-to-top" width="24px" height="24px" />
             </Button>
           </ScrollToTopButton>
         ) : (
@@ -175,7 +194,10 @@ function Home({ userInfo }) {
       </MainContent>
       {isOpen && (
         <Modal width="300px" height="auto" toggleModal={toggleModal}>
-          <SelectBookshelfList closeModal={toggleModal} />
+          <SelectBookshelfList
+            closeModal={toggleModal}
+            targetBook={targetRef.current}
+          />
         </Modal>
       )}
     </div>
@@ -201,6 +223,7 @@ const SearchBar = styled.form`
   border-radius: 20px;
   padding: 10px 22px;
   margin: 20px auto;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 
   #keywordInput {
     width: calc(70vw - 90px);
@@ -251,6 +274,10 @@ const ScrollToTopButton = styled.div`
   position: fixed;
   right: 20px;
   bottom: 20px;
+
+  button {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
 `;
 
 export default React.memo(Home);

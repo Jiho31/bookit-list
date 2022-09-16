@@ -1,17 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Icon } from "@iconify/react";
+import { v4 as uuid } from "uuid";
+import CheckboxInput from "./CheckboxInput";
 
-function SelectBookshelfList({ closeModal }) {
+function SelectBookshelfList({ closeModal, targetBook }) {
   // bookshelf id 값 필요함
+  const [bookshelves, setBookshelves] = useState({});
 
-  const shelf = {
-    id: "id123",
-    isSelected: false,
-    name: "To Read",
+  const checkedItemHandler = (bookshelfID, isChecked) => {
+    // 체크된 bookshelf의 books에 targetBook 추가 or 삭제
+    setBookshelves((prevState) => {
+      const newState = Object.assign({}, JSON.parse(JSON.stringify(prevState)));
+
+      if (isChecked && !newState[bookshelfID].books[targetBook.isbn]) {
+        console.log("book added to bookshelf");
+        newState[bookshelfID].books[targetBook.isbn] = targetBook;
+      } else if (!isChecked) {
+        console.log("book deleted from bookshelf");
+        delete newState[bookshelfID].books[targetBook.isbn];
+      }
+
+      // localstorage 업데이트하는 코드 추가하기 ✨ ✨
+      localStorage.setItem("bookshelves", JSON.stringify(newState));
+
+      return newState;
+    });
   };
 
-  const bookshelves = ["To Read", "READ", "Assignment Ref"];
+  useEffect(() => {
+    const storage = JSON.parse(localStorage.getItem("bookshelves"));
+
+    setBookshelves(storage);
+  }, []);
 
   return (
     <div>
@@ -21,14 +42,26 @@ function SelectBookshelfList({ closeModal }) {
       </Header>
 
       <ListWrapper>
-        {bookshelves.map((shelf) => {
-          return (
-            <li>
-              <input type="checkbox" id={shelf} name={shelf} />
-              <label htmlFor={shelf}>{shelf}</label>
-            </li>
-          );
-        })}
+        {Object.keys(bookshelves).length > 0 ? (
+          Object.keys(bookshelves).map((shelfID) => {
+            const shelf = bookshelves[shelfID];
+            return (
+              <li key={uuid()}>
+                <CheckboxInput
+                  id={shelfID}
+                  name={shelf.name}
+                  checkedItemHandler={checkedItemHandler}
+                  targetID={targetBook.isbn}
+                />
+              </li>
+            );
+          })
+        ) : (
+          <div>
+            <p>책꽂이가 없습니다!</p>
+          </div>
+        )}
+        <div>새 책꽂이 만들기</div>
       </ListWrapper>
     </div>
   );
@@ -74,4 +107,4 @@ const ListWrapper = styled.ul`
   }
 `;
 
-export default SelectBookshelfList;
+export default React.memo(SelectBookshelfList);

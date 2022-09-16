@@ -31,8 +31,6 @@ const initialState = {
 
 const bookshelvesAdapter = createEntityAdapter();
 
-const cache = {};
-
 export const bookshelvesSlice = createSlice({
   name: "bookshelves",
   initialState: bookshelvesAdapter.getInitialState(),

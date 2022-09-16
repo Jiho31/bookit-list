@@ -2,7 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import Button from "./Button";
 
-function SearchResult({ item, toggleModal }) {
+function SearchResult({ item, toggleModal, setTarget }) {
+  const clickEventHandler = () => {
+    toggleModal();
+    setTarget(item);
+  };
+
   return (
     <Item>
       <img src={item.thumbnail} alt={`${item.title} 표지`} />
@@ -32,7 +37,7 @@ function SearchResult({ item, toggleModal }) {
           </button>
         </div>
         <div>
-          <Button aria-label="Add to Bookshelf" onClick={toggleModal}>
+          <Button aria-label="Add to Bookshelf" onClick={clickEventHandler}>
             책꽂이에 담기
           </Button>
         </div>

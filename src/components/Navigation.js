@@ -34,9 +34,11 @@ function Navigation() {
     <StyledNav>
       <ul>
         <li>
-          <span>
-            <img src={process.env.PUBLIC_URL + "logo.png"} alt="logo icon" />
-          </span>
+          <Link to="/">
+            <span>
+              <img src={process.env.PUBLIC_URL + "logo.png"} alt="logo icon" />
+            </span>
+          </Link>
         </li>
         <li className={activeTab === 1 ? "active" : ""}>
           <Link to="/">

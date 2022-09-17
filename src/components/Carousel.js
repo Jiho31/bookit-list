@@ -1,16 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import styled from "styled-components";
+import { Icon } from "@iconify/react";
 
 // 캐러셀 크기 변수
 const Width = "950px"; // 캐러셀의 넓이
-const Height = "400px"; // 캐러셀의 높이
+const Height = "340px"; // 캐러셀의 높이
 const NumOfContents = 3; // 슬라이드 한 개에서 보이는 컨텐츠 개수
 
-function Carousel({ children }) {
+function Carousel({ numOfBooks, children }) {
   const [slideIndex, setSlideIndex] = useState(0);
   const [isTransitionEnabled, setIsTransitionEnabled] = useState(false);
   const sliderRef = useRef();
+  const lastPageIndex = Math.ceil(numOfBooks / NumOfContents) - 1;
 
   useEffect(() => {
     // console.log(slideIndex);
@@ -25,7 +27,7 @@ function Carousel({ children }) {
   });
 
   const nextBtnClickHandler = useCallback(() => {
-    if (slideIndex === 2) return;
+    if (slideIndex === lastPageIndex) return;
 
     setSlideIndex((prev) => prev + 1);
 
@@ -37,26 +39,15 @@ function Carousel({ children }) {
       <Window>
         <Slider ref={sliderRef}>
           <Slide>{children}</Slide>
-          {/* <Slide>
-            <img src={bookCoverSrc} alt="book cover" />
-            <img src={bookCoverSrc} alt="book cover" />
-            <img src={bookCoverSrc} alt="book cover" />
-          </Slide>
-          <Slide>
-            <img src={bookCoverSrc} alt="book cover" />
-            <img src={bookCoverSrc} alt="book cover" />
-            <img src={bookCoverSrc} alt="book cover" />
-          </Slide>
-          <Slide>
-            <img src={bookCoverSrc} alt="book cover" />
-            <img src={bookCoverSrc} alt="book cover" />
-            <img src={bookCoverSrc} alt="book cover" />
-          </Slide> */}
         </Slider>
       </Window>
       <Buttons>
-        <PrevButton onClick={prevBtnClickHandler}>이전</PrevButton>
-        <NextButton onClick={nextBtnClickHandler}>다음</NextButton>
+        <PrevButton onClick={prevBtnClickHandler}>
+          <Icon icon="bxs:left-arrow" />
+        </PrevButton>
+        <NextButton onClick={nextBtnClickHandler}>
+          <Icon icon="bxs:right-arrow" />
+        </NextButton>
       </Buttons>
     </Container>
   );
@@ -89,11 +80,6 @@ const Slider = styled.div`
 const Slide = styled.div`
   width: ${Width};
   height: auto;
-
-  /* img {
-    width: 300px;
-    margin: 0 50px;
-  } */
 `;
 
 const Buttons = styled.div`
@@ -103,6 +89,12 @@ const Buttons = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+
+  button {
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+  }
 `;
 
 const PrevButton = styled(Button)`

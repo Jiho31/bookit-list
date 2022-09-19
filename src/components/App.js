@@ -104,7 +104,8 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
   a {
-    text-decoration: none
+    text-decoration: none;
+    color: inherit;
   }
   button {
     background: none;

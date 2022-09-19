@@ -80,6 +80,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     overflow-x: hidden;
     background-color: #EBF7FD;
+    font-family: 'Roboto', 'Noto Sans KR', sans-serif;
   }
   *,
   :after,

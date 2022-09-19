@@ -26,6 +26,11 @@ function Navigation() {
         setActiveTab(3);
         break;
       default:
+        const queries = window.location.pathname.split("/");
+        if (queries.length === 4 && queries[1] === "library") {
+          setActiveTab(2);
+          break;
+        }
         setActiveTab(1);
     }
   });
@@ -43,19 +48,19 @@ function Navigation() {
         <li className={activeTab === 1 ? "active" : ""}>
           <Link to="/">
             <Icon icon="bx:search-alt-2" />
-            Search
+            도서 검색
           </Link>
         </li>
         <li className={activeTab === 2 ? "active" : ""}>
           <Link to="/library">
             <Icon icon="mdi:bookshelf" />
-            Library
+            책꽂이
           </Link>
         </li>
         <li className={activeTab === 3 ? "active" : ""}>
           <Link to="/memos">
             <Icon icon="fa-solid:pen" />
-            Memos
+            메모
           </Link>
         </li>
         <li>
@@ -77,7 +82,7 @@ const StyledNav = styled.nav`
   }
   li {
     height: auto;
-    font-size: 20px;
+    font-size: 18px;
   }
   li:first-child {
     height: auto;

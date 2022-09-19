@@ -126,15 +126,12 @@ function Library({ userInfo }) {
         </Button>
       </ButtonWrapper>
       <Bookshelves>
-        {/* <Bookshelf />
-        <Bookshelf />
-        <Bookshelf /> */}
         {Object.keys(bookshelves).map((id) => {
-          // console.log(bookshelves[id]);
           const shelf = bookshelves[id];
           return (
             <Bookshelf
               key={id}
+              bookshelfID={id}
               shelf={shelf}
               numOfBooks={Object.keys(shelf.books).length}
             />

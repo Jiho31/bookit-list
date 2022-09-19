@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import BookDetail from "routes/BookDetail";
 import Library from "routes/Library";
 import Memos from "routes/Memos";
 import Auth from "../routes/Auth";
@@ -17,8 +18,13 @@ function Router({ isLoggedIn, userInfo }) {
           <Route path="/" element={<Auth />}></Route>
         )}
         <Route
+          exact
           path="/library"
           element={<Library userInfo={userInfo} />}
+        ></Route>
+        <Route
+          path="/library/:bookshelfID/:bookID"
+          element={<BookDetail userInfo={userInfo} />}
         ></Route>
         <Route path="/memos" element={<Memos userInfo={userInfo} />}></Route>
       </Routes>

@@ -1,21 +1,24 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-function BookComponent({ book, width, height }) {
+function BookComponent({ shelfID, book, width, height }) {
   return (
     <Book width={width} height={height}>
-      <img src={book.thumbnail} alt={`${book.title}의 표지`} />
-      <Info>
-        <h3>{book.title}</h3>
-        <div>{book.authors[0]}</div>
-      </Info>
+      <Link to={`/library/${shelfID}/${book.isbn}`}>
+        <img src={book.thumbnail} alt={`${book.title}의 표지`} />
+        <Info>
+          <h3>{book.title}</h3>
+          <div>{book.authors[0]}</div>
+        </Info>
+      </Link>
     </Book>
   );
 }
 
 const Book = styled.div`
-  width: ${(props) => (props.width ? props.width : "260px")};
-  height: ${(props) => (props.height ? props.height : "340px")};
+  width: ${(props) => (props.width ? props.width : "250px")};
+  height: ${(props) => (props.height ? props.height : "350px")};
   border: 1px solid #d9d9d9;
   border-radius: 10px;
   background-color: #fff;
@@ -42,7 +45,7 @@ const Info = styled.div`
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -50,7 +53,8 @@ const Info = styled.div`
   }
   div {
     margin-top: 15px;
-    font-size: 15px;
+    margin-bottom: 10px;
+    font-size: 14px;
   }
 `;
 

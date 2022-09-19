@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react";
 
 // 캐러셀 크기 변수
 const Width = "950px"; // 캐러셀의 넓이
-const Height = "340px"; // 캐러셀의 높이
+const Height = "350px"; // 캐러셀의 높이
 const NumOfContents = 3; // 슬라이드 한 개에서 보이는 컨텐츠 개수
 
 function Carousel({ numOfBooks, children }) {

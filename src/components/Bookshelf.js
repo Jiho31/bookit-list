@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import BookComponent from "./BookComponent";
 import Carousel from "./Carousel";
 
-function Bookshelf({ shelf, numOfBooks }) {
+function Bookshelf({ bookshelfID, shelf, numOfBooks }) {
   return (
     <StyledShelf>
       <h2>
@@ -16,7 +16,7 @@ function Bookshelf({ shelf, numOfBooks }) {
             {Object.keys(shelf.books).map((id) => {
               return (
                 <li key={uuid()}>
-                  <BookComponent book={shelf.books[id]} />
+                  <BookComponent shelfID={bookshelfID} book={shelf.books[id]} />
                 </li>
               );
             })}
@@ -32,7 +32,7 @@ function Bookshelf({ shelf, numOfBooks }) {
   );
 }
 
-const BookComponentWidth = "260px";
+const BookComponentWidth = "250px";
 const CarouselWidth = "950px";
 
 const StyledShelf = styled.section`

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import Memo from "components/MemoComponent";
-import Button from "components/Button";
+import MemoComponent from "components/MemoComponent";
+import MemoForm from "components/MemoForm";
 import styled from "styled-components";
 import { dbService } from "fbase";
 import {
@@ -23,7 +23,7 @@ function Memos({ userInfo }) {
   const memosLength = useSelector(selectMemosLength);
   const dispatch = useDispatch();
 
-  // firebase 데이터베이스에 있는 메모 데이터 읽어와서 리덕스 스토어에 저장
+  // firebase 데이터베이스에 있는 메모 데이터 읽어와서 저장
   useEffect(() => {
     const q = query(
       collection(dbService, "memo"),
@@ -34,15 +34,21 @@ function Memos({ userInfo }) {
         id: doc.id,
         ...doc.data(),
       }));
+      console.log(memoArr);
 
-      memoArr.forEach((data) => dispatch(createMemo(data)));
+      memoArr.forEach((data) => {
+        // 리덕스 스토어에 저장
+        dispatch(createMemo(data));
+      });
+
+      // local storage에 저장
+      localStorage.setItem("bookMemos", JSON.stringify(memoArr));
     });
   });
 
   const onSubmitHandler = useCallback(
     async (e) => {
       e.preventDefault();
-      // console.log("clicked");
 
       if (memoInput.current.value === "") return;
 
@@ -67,19 +73,14 @@ function Memos({ userInfo }) {
 
   return (
     <div>
-      <MemoForm onSubmit={onSubmitHandler}>
-        <input type="text" ref={memoInput} placeholder="새 메모를 입력하세요" />
-        <SubmitButton type="submit" aria-label="메모 등록하기">
-          메모 등록
-        </SubmitButton>
-      </MemoForm>
+      <MemoForm onSubmit={onSubmitHandler} ref={memoInput} />
       <div>
         <MemoListContainer>
           {memosLength > 0
             ? Object.keys(memos).map((key) => {
-                console.log(key);
+                // console.log(key);
                 return (
-                  <Memo
+                  <MemoComponent
                     key={memos[key].id}
                     memoObj={memos[key]}
                     isOwner={memos[key].creatorId === userInfo.uid}
@@ -92,30 +93,6 @@ function Memos({ userInfo }) {
     </div>
   );
 }
-
-const MemoForm = styled.form`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-
-  input:first-child {
-    padding: 10px;
-    width: 600px;
-    height: 70px;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 20px;
-    font-size: 16px;
-  }
-`;
-
-const SubmitButton = styled(Button)`
-  width: 75px;
-  height: 45px;
-  margin-left: 10px;
-  font-weight: 500;
-  font-size: 14px; ;
-`;
 
 const MemoListContainer = styled.ul`
   display: flex;

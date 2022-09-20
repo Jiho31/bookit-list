@@ -1,13 +1,13 @@
+import { Icon } from "@iconify/react";
 import { dbService } from "fbase";
-import { doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateMemo, removeMemo, selectMemosEntities } from "redux/memos";
+import { removeMemo, selectMemosEntities, updateMemo } from "redux/memos";
 import styled from "styled-components";
-import { Icon } from "@iconify/react";
 import Button from "./Button";
 
-const Memo = React.memo(function Memo({ memoObj, isOwner }) {
+const MemoComponent = React.memo(function Memo({ memoObj, isOwner }) {
   const [isEditing, setIsEditing] = useState(false);
   // const [newMemo, setNewMemo] = useState(memoObj.content);
   const memos = useSelector(selectMemosEntities);
@@ -59,11 +59,11 @@ const Memo = React.memo(function Memo({ memoObj, isOwner }) {
             ref={newMemoInput}
             defaultValue={memoObj.content}
           ></input>
-          <input type="submit" value="Save Memo"></input>
+          <Button type="submit">저장</Button>
         </form>
       ) : (
         <MemoWrapper>
-          <p>{memos[memoObj.id].content}</p>
+          <div>{memos[memoObj.id].content}</div>
           <EditButton
             backgroundColor="#fff"
             width="32px"
@@ -73,7 +73,7 @@ const Memo = React.memo(function Memo({ memoObj, isOwner }) {
             <Icon
               title="메모 편집"
               icon="carbon:overflow-menu-horizontal"
-              color="#6D8FAD"
+              color="#36506C"
               width="26px"
               height="26px"
             />
@@ -92,8 +92,9 @@ const Memo = React.memo(function Memo({ memoObj, isOwner }) {
 
 const StyledMemo = styled.li`
   width: 80%;
-  /* border: 3px solid pink; */
+  box-shadow: 0px 3px 3px 0px #959da533;
   background-color: #fff;
+  color: #000;
   border-radius: 0 20px 0 20px;
   padding: 20px;
   margin: 5px;
@@ -101,6 +102,10 @@ const StyledMemo = styled.li`
 
 const MemoWrapper = styled.div`
   position: relative;
+
+  & > div {
+    white-space: pre;
+  }
 `;
 
 const EditButton = styled(Button)`
@@ -109,4 +114,4 @@ const EditButton = styled(Button)`
   right: 0px;
 `;
 
-export default Memo;
+export default MemoComponent;

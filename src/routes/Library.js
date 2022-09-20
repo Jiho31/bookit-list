@@ -189,6 +189,7 @@ const ButtonWrapper = styled.div`
 const Bookshelves = styled.section`
   display: flex;
   flex-direction: column;
+  padding: 60px 0;
 `;
 
 const BookshelfForm = styled.div`

@@ -39,8 +39,16 @@ const StyledShelf = styled.section`
   display: flex;
   flex-direction: column;
   width: 100%;
-  /* max-width: 950px; */
-  margin: 50px 0;
+  margin-bottom: 60px;
+
+  &:after {
+    content: "";
+    align-self: center;
+    margin-top: 60px;
+    width: ${CarouselWidth};
+    height: 1.5px;
+    background-color: #d9d9d9;
+  }
 
   ul {
     display: flex;
@@ -52,7 +60,7 @@ const StyledShelf = styled.section`
   }
 
   h2 {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 600;
     line-height: 28px;
     padding: 10px 0;

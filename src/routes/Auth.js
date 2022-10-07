@@ -16,7 +16,7 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [newAccount, setNewAccount] = useState(true);
+  // const [newAccount, setNewAccount] = useState(true);
   const [error, setError] = useState("");
 
   const dispatch = useDispatch();
@@ -30,6 +30,8 @@ function Auth() {
       setUsername(value);
     } else if (name === "password") {
       setPassword(value);
+    } else if (name === "email") {
+      setEmail(value);
     }
   };
 
@@ -38,6 +40,9 @@ function Auth() {
 
     try {
       let data;
+
+      /*
+      // 회원가입
       if (newAccount) {
         // create account
         data = await createUserWithEmailAndPassword(
@@ -45,17 +50,23 @@ function Auth() {
           email,
           password
         );
+
+        setNewAccount(false);
       } else {
-        // login
+        // 로그인
         data = await signInWithEmailAndPassword(authService, email, password);
       }
-      console.log(data);
+      */
+
+      // 로그인 요청
+      data = await signInWithEmailAndPassword(authService, email, password);
+
+      // console.log(data);
     } catch (err) {
-      setError(err.message);
+      // setError(err.message);
+      setError("🥺 올바른 이메일주소와 비밀번호를 입력하세요!");
     }
   };
-
-  const toggleAccount = () => setNewAccount((prev) => !prev);
 
   const addUsers = (userId) => {
     const userObj = {
@@ -106,9 +117,8 @@ function Auth() {
     } else if (name === "github") {
       provider = new GithubAuthProvider();
     }
-    console.log(provider);
     const data = await signInWithPopup(authService, provider);
-    console.log(data); // data.user.uid
+    // console.log(data); // data.user.uid
 
     // firebase에서 users 컬렉션 불러와서 아이디 추가
 
@@ -129,10 +139,10 @@ function Auth() {
         <LoginForm onSubmit={onSubmitHandler}>
           <input
             type="text"
-            name="username"
-            placeholder="아이디를 입력해주세요"
+            name="email"
+            placeholder="이메일을 입력해주세요"
             onChange={onChangeHandler}
-            value={username}
+            value={email}
             required
           />
           <input
@@ -144,7 +154,7 @@ function Auth() {
             required
           />
           <Button type="submit">로그인</Button>
-          {error}
+          <ErrorMessage>{error}</ErrorMessage>
         </LoginForm>
         <SocialLoginButtons>
           <Button
@@ -234,6 +244,12 @@ const SocialLoginButtons = styled.div`
   button {
     width: calc((100% - 10px) / 2);
   }
+`;
+
+const ErrorMessage = styled.div`
+  font-size: 14px;
+  color: red;
+  padding: 6px 0;
 `;
 
 export default Auth;

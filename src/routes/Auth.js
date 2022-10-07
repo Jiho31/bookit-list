@@ -9,9 +9,12 @@ import {
 } from "firebase/auth";
 import { addUserInfo } from "redux/users";
 import { useDispatch } from "react-redux";
+import styled from "styled-components";
+import Button from "components/Button";
 
 function Auth() {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [newAccount, setNewAccount] = useState(true);
   const [error, setError] = useState("");
@@ -23,8 +26,8 @@ function Auth() {
       target: { name, value },
     } = e;
 
-    if (name === "email") {
-      setEmail(value);
+    if (name === "username") {
+      setUsername(value);
     } else if (name === "password") {
       setPassword(value);
     }
@@ -114,43 +117,123 @@ function Auth() {
   };
 
   return (
-    <div>
-      <form onSubmit={onSubmitHandler}>
-        <input
-          type="text"
-          name="email"
-          placeholder="Email"
-          onChange={onChangeHandler}
-          value={email}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={onChangeHandler}
-          value={password}
-          required
-        />
-        <input
-          type="submit"
-          value={newAccount ? "Create Account" : "Sign In"}
-        />
-        {error}
-      </form>
-      <span onClick={toggleAccount}>
-        {newAccount ? "Sign In" : "Create Account"}
-      </span>
-      <div>
-        <button name="google" onClick={onSocialClick}>
-          Continue with Google
-        </button>
-        <button name="github" onClick={onSocialClick}>
-          Continue with Github
-        </button>
-      </div>
-    </div>
+    <AuthWrapper>
+      <LogoWrapper>
+        <img src={process.env.PUBLIC_URL + "logo.png"} alt="logo icon" />
+      </LogoWrapper>
+
+      <LoginContainer>
+        <h1>
+          로그인/회원가입 후<br /> 이용하세요!
+        </h1>
+        <LoginForm onSubmit={onSubmitHandler}>
+          <input
+            type="text"
+            name="username"
+            placeholder="아이디를 입력해주세요"
+            onChange={onChangeHandler}
+            value={username}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="비밀번호를 입력해주세요"
+            onChange={onChangeHandler}
+            value={password}
+            required
+          />
+          <Button type="submit">로그인</Button>
+          {error}
+        </LoginForm>
+        <SocialLoginButtons>
+          <Button
+            name="google"
+            onClick={onSocialClick}
+            backgroundColor="#d9d9d9"
+            color="#000"
+          >
+            Google 계정으로 로그인
+          </Button>
+          <Button
+            name="github"
+            onClick={onSocialClick}
+            backgroundColor="#d9d9d9"
+            color="#000"
+          >
+            Github 계정으로 로그인
+          </Button>
+        </SocialLoginButtons>
+      </LoginContainer>
+    </AuthWrapper>
   );
 }
+
+const AuthWrapper = styled.div`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const LogoWrapper = styled.div`
+  margin: 70px 0;
+
+  img {
+    width: 200px;
+    height: auto;
+  }
+`;
+
+const LoginContainer = styled.section`
+  width: 400px;
+  height: min-content;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0px 8px 24px 0px #959da533;
+  padding: 0 10px;
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 24px;
+    padding: 40px 0;
+  }
+  button {
+    height: 46px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+`;
+
+const LoginForm = styled.form`
+  display: flex;
+  flex-direction: column;
+
+  input {
+    height: 46px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+`;
+
+const SocialLoginButtons = styled.div`
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 30px;
+
+  button {
+    width: calc((100% - 10px) / 2);
+  }
+`;
 
 export default Auth;

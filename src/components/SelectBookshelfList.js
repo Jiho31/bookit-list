@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Icon } from "@iconify/react";
 import { v4 as uuid } from "uuid";
 import CheckboxInput from "./CheckboxInput";
+import Button from "./Button";
+import { Link } from "react-router-dom";
 
 function SelectBookshelfList({ closeModal, targetBook }) {
   // bookshelf id 값 필요함
@@ -30,6 +32,10 @@ function SelectBookshelfList({ closeModal, targetBook }) {
 
   useEffect(() => {
     const storage = JSON.parse(localStorage.getItem("bookshelves"));
+
+    if (!storage) {
+      return;
+    }
 
     setBookshelves(storage);
   }, []);
@@ -61,7 +67,10 @@ function SelectBookshelfList({ closeModal, targetBook }) {
             <p>책꽂이가 없습니다!</p>
           </div>
         )}
-        <div>새 책꽂이 만들기</div>
+
+        <Link to="/library">
+          <Button width="100%">새 책꽂이 만들기</Button>
+        </Link>
       </ListWrapper>
     </div>
   );
@@ -102,8 +111,19 @@ const ListWrapper = styled.ul`
   }
 
   li > label {
-    font-size: 18px;
+    font-size: 16px;
     text-align: center;
+  }
+
+  p {
+    margin: 20px 0;
+    text-align: center;
+    font-size: 15px;
+  }
+
+  a {
+    margin: 5px auto;
+    width: 80%;
   }
 `;
 

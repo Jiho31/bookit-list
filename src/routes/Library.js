@@ -17,11 +17,15 @@ import { v4 as uuid } from "uuid";
 
 function Library({ userInfo }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [bookshelves, setBookshelves] = useState(
-    JSON.parse(localStorage.getItem("bookshelves"))
-  );
+  const [bookshelves, setBookshelves] = useState({});
   // const bookshelves = useSelector(selectBookshelvesEntities);
   const inputRef = useRef();
+
+  useEffect(() => {
+    if (localStorage.getItem("bookshelves")) {
+      setBookshelves(JSON.parse(localStorage.getItem("bookshelves")));
+    }
+  }, []);
 
   const toggleModal = () => {
     setIsOpen((prev) => !prev);
@@ -126,17 +130,23 @@ function Library({ userInfo }) {
         </Button>
       </ButtonWrapper>
       <Bookshelves>
-        {Object.keys(bookshelves).map((id) => {
-          const shelf = bookshelves[id];
-          return (
-            <Bookshelf
-              key={id}
-              bookshelfID={id}
-              shelf={shelf}
-              numOfBooks={Object.keys(shelf.books).length}
-            />
-          );
-        })}
+        {Object.keys(bookshelves).length > 0 ? (
+          Object.keys(bookshelves).map((id) => {
+            const shelf = bookshelves[id];
+            return (
+              <Bookshelf
+                key={id}
+                bookshelfID={id}
+                shelf={shelf}
+                numOfBooks={Object.keys(shelf.books).length}
+              />
+            );
+          })
+        ) : (
+          <EmptyLibrary>
+            책꽂이가 없습니다. 나만의 책꽂이를 만들어서 책을 추가해보세요!
+          </EmptyLibrary>
+        )}
       </Bookshelves>
       {isOpen && (
         <Modal toggleModal={toggleModal} width="auto" height="auto">
@@ -221,6 +231,12 @@ const BookshelfForm = styled.div`
       margin-right: 5%;
     }
   }
+`;
+
+const EmptyLibrary = styled.p`
+  margin: 20px 0;
+  text-align: center;
+  font-size: 15px;
 `;
 
 export default Library;

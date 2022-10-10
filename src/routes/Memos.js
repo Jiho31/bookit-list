@@ -131,8 +131,6 @@ function Memos({ userInfo }) {
       <MemoListContainer>
         {Object.keys(memos).length > 0
           ? Object.keys(memos).map((key) => {
-              // console.log(key);
-              console.log(memos[key]);
               return (
                 <MemoComponent
                   key={key}

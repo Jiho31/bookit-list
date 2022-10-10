@@ -6,22 +6,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeMemo, selectMemosEntities, updateMemo } from "redux/memos";
 import styled from "styled-components";
 import Button from "./Button";
+import MemoForm from "./MemoForm";
 
-const MemoComponent = React.memo(function Memo({ memoObj, isOwner }) {
+const MemoComponent = React.memo(function Memo({
+  memoObj,
+  isOwner,
+  memoWidth,
+}) {
   const [isEditing, setIsEditing] = useState(false);
-  // const [newMemo, setNewMemo] = useState(memoObj.content);
   const memos = useSelector(selectMemosEntities);
   const newMemoInput = useRef();
   newMemoInput.current = memoObj.content;
 
-  const dispatch = useDispatch();
-
-  const memoDocRef = doc(dbService, "memo", `${memoObj.id}`);
+  // const dispatch = useDispatch();
+  // const memoDocRef = doc(dbService, "memo", `${memoObj.id}`);
 
   const onDeleteClick = async () => {
-    await deleteDoc(memoDocRef);
+    // await deleteDoc(memoDocRef);
 
-    dispatch(removeMemo(memoObj.id));
+    // dispatch(removeMemo(memoObj.id));
+    console.log(`delete this memo: ${memoObj.id}`);
   };
   const onEditClick = () => {
     toggleEditing();
@@ -41,29 +45,27 @@ const MemoComponent = React.memo(function Memo({ memoObj, isOwner }) {
     }
     toggleEditing();
 
-    // firebase에 저장된 데이터 업데이트
-    await updateDoc(memoDocRef, {
-      content: newContent,
-    });
+    // // firebase에 저장된 데이터 업데이트
+    // await updateDoc(memoDocRef, {
+    //   content: newContent,
+    // });
 
-    // 리덕스 데이터 갱신
-    dispatch(updateMemo({ ...memos[memoObj.id], content: newContent }));
+    // // 리덕스 데이터 갱신
+    // dispatch(updateMemo({ ...memos[memoObj.id], content: newContent }));
   };
 
   return (
-    <StyledMemo>
+    <StyledMemo width={memoWidth}>
       {isEditing ? (
-        <form onSubmit={onSubmitHandler}>
-          <input
-            type="text"
-            ref={newMemoInput}
-            defaultValue={memoObj.content}
-          ></input>
-          <Button type="submit">저장</Button>
-        </form>
+        <MemoForm
+          onSubmit={onSubmitHandler}
+          ref={newMemoInput}
+          buttonVal="저장"
+          defaultValue={memoObj.content}
+        />
       ) : (
         <MemoWrapper>
-          <div>{memos[memoObj.id].content}</div>
+          <div>{memoObj.content}</div>
           <EditButton
             backgroundColor="#fff"
             width="32px"
@@ -91,13 +93,15 @@ const MemoComponent = React.memo(function Memo({ memoObj, isOwner }) {
 });
 
 const StyledMemo = styled.li`
-  width: 80%;
+  width: ${(props) => (props.width ? props.width : "80%")};
+  /* width: 80%; */
+  max-width: 860px;
   box-shadow: 0px 3px 3px 0px #959da533;
   background-color: #fff;
   color: #000;
   border-radius: 0 20px 0 20px;
   padding: 20px;
-  margin: 5px;
+  margin: 10px;
 `;
 
 const MemoWrapper = styled.div`

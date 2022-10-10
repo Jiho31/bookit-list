@@ -1,9 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { Icon } from "@iconify/react";
+// import { useSelector } from "react-redux";
+// import { selectMemosEntities, selectMemosLength } from "redux/memos";
+import MemoComponent from "components/MemoComponent";
+import MemoForm from "components/MemoForm";
+import { v4 as uuid } from "uuid";
 
-function BookDetail(props) {
+function BookDetail({ userInfo }) {
+  // const memos = useSelector(selectMemosEntities);
+  // const memosLength = useSelector(selectMemosLength);
+  const [memos, setMemos] = useState({});
+  const memoInput = useRef();
+
   const params = useParams();
   const item = {
     title: "harry potter",
@@ -20,11 +30,76 @@ function BookDetail(props) {
   const [bookInfo, setBookInfo] = useState(item);
 
   useEffect(() => {
-    // console.log(params);
+    // 저장된 책꽂이 이름, 책 정보 불러오기
     const storageData = JSON.parse(localStorage.getItem("bookshelves"));
 
     setShelfName(storageData[params.bookshelfID].name);
     setBookInfo(storageData[params.bookshelfID].books[params.bookID]);
+
+    getStoredMemos();
+  }, []);
+
+  const getStoredMemos = useCallback(() => {
+    // 현재 책에 대한 메모 데이터 local storage에서 불러오기
+
+    if (localStorage.getItem("bookMemos")) {
+      const bookMemos = JSON.parse(localStorage.getItem("bookMemos"));
+
+      setMemos(
+        Object.values(bookMemos).filter(
+          (memo) =>
+            memo.bookshelfId === params.bookshelfID &&
+            memo.bookId === params.bookID
+        )
+      );
+    }
+  });
+
+  const createNewMemo = useCallback((e) => {
+    e.preventDefault();
+
+    if (memoInput.current.value === "") return;
+
+    const newMemo = {
+      id: uuid(),
+      content: memoInput.current.value,
+      createdAt: new Date().toISOString().slice(0, 10),
+      creatorId: userInfo.uid,
+      bookId: params.bookID,
+      bookshelfId: params.bookshelfID,
+    };
+
+    // local storage에 새로운 메모 저장
+    if (localStorage.getItem("bookMemos")) {
+      const savedMemos = JSON.parse(localStorage.getItem("bookMemos"));
+      savedMemos[newMemo.id] = newMemo;
+
+      localStorage.setItem(
+        "bookMemos",
+        JSON.stringify({
+          ...savedMemos,
+        })
+      );
+    } else {
+      const newStorage = {};
+      newStorage[newMemo.id] = newMemo;
+      localStorage.setItem(
+        "bookMemos",
+        JSON.stringify({
+          ...newStorage,
+        })
+      );
+    }
+
+    // memos 상태 값 업데이트
+    setMemos((prev) => {
+      const newState = { ...prev };
+      newState[newMemo.id] = newMemo;
+
+      return newState;
+    });
+
+    memoInput.current.value = "";
   }, []);
 
   return (
@@ -63,9 +138,22 @@ function BookDetail(props) {
       </BookInfoWrapper>
       <Divider />
       <MemosWrapper>
-        <article>memo1</article>
-        <article>memo2</article>
-        <article>memo3</article>
+        <MemoForm onSubmit={createNewMemo} ref={memoInput} />
+        <MemoListContainer>
+          {Object.keys(memos).length > 0
+            ? Object.keys(memos).map((key) => {
+                // console.log(key);
+                return (
+                  <MemoComponent
+                    key={memos[key].id}
+                    memoObj={memos[key]}
+                    isOwner={memos[key].creatorId === userInfo.uid}
+                    memoWidth="400px"
+                  />
+                );
+              })
+            : ""}
+        </MemoListContainer>
       </MemosWrapper>
     </Container>
   );
@@ -140,6 +228,15 @@ const Divider = styled.div`
   height: 1px;
   background-color: #6d8fad;
 `;
-const MemosWrapper = styled.section``;
+const MemosWrapper = styled.section`
+  margin: 40px 0;
+`;
+const MemoListContainer = styled.ul`
+  display: flex;
+  /* flex-direction: column; */
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 30px 0;
+`;
 
 export default BookDetail;

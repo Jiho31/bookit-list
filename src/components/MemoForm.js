@@ -2,17 +2,23 @@ import React from "react";
 import styled from "styled-components";
 import Button from "./Button";
 
-const MemoForm = React.forwardRef(function MemoForm({ onSubmit }, ref) {
+const MemoForm = React.forwardRef(function MemoForm(
+  { placeholder, buttonVal, defaultValue, onSubmit },
+  ref
+) {
   return (
     <StyledForm onSubmit={onSubmit}>
       <textarea
         name="memo"
         ref={ref}
         maxLength={200}
-        placeholder="새 메모를 입력하세요 (최대 200자)"
+        defaultValue={defaultValue}
+        placeholder={
+          placeholder ? placeholder : "새 메모를 입력하세요 (최대 200자)"
+        }
       ></textarea>
       <SubmitButton type="submit" aria-label="메모 등록하기">
-        메모 등록
+        {buttonVal ? buttonVal : "메모 등록"}
       </SubmitButton>
     </StyledForm>
   );

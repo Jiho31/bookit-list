@@ -1,35 +1,45 @@
 # Bookit List
 
 > 🌟 북킷리스트는 용도별로 나만의 책꽂이를 만들어서 책을 담고,<br /> 책에서 기억하고 싶은 문구나 내용을 작성할 수 있는 **독서 기록용 웹 애플리케이션**입니다.
+> 
+> Bookit List is a web application to keep track of your readings. You can create your own bookshelves, add books to them, and create memos of phrases or content you want to remember from the books.
 
-## Demo / 배포
+## Deployment / 배포
 
 🔗 [https://bookit-list.netlify.app/](https://bookit-list.netlify.app/)
 
 <details>
-  <summary>먼저 읽어주세요! 🙌</summary>
+  <summary>Please read this first! 🙌</summary>
 
   현재 배포된 사이트에 접속시 로그인 절차가 포함되어 있지만, 같은 기기에서 저장한 데이터만 조회할 수 있는 상태입니다. (로컬 스토리지에만 데이터가 저장됩니다.) 추후에 Firebase 데이터베이스와 연결해서 동일한 계정으로 로그인 할 경우, 다른 기기를 사용해서 저장한 데이터에도 접근할 수 있도록 수정할 예정입니다. 이용해주셔서 감사합니다.
+  
+  Although the currently deployed website includes a login process, you can only view data saved on the same device (data is only stored in local storage). I have plans to modify this in the future to connect with a Firebase database so that when you log in with the same account, you can access data saved using other devices. Thank you.
 
 </details>
 
 ```
 🔐 임시 로그인 아이디 & 비밀번호:
+Temporary ID & Password (to test the service):
 
-아이디: ilovebooks@bookitlist.com
-비밀번호: 123456
+ID: ilovebooks@bookitlist.com
+Password: 123456
 ```
 
 ## Features / 주요 기능
 
-- 카카오 도서 검색 API로 **책 검색**
-- **나만의 책꽂이**를 생성해서 원하는 대로 책들을 분류해서 저장
-- 책꽂이에 저장한 책에 대한 **메모 저장**
+- 카카오 도서 검색 API로 **책 검색** <br/>
+Search for books using the Kakao Book Search API
+- **나만의 책꽂이**를 생성해서 원하는 대로 책들을 분류해서 저장 <br/>
+Create and manage your private bookshelves to categorize and store books as you wish
+- 책꽂이에 저장한 책에 대한 **메모 저장** <br/> 
+Save memos for the books stored in your bookshelves
 
-### +@ 추가하면 좋을 기능
+### +@ 추가하면 좋을 기능 / Planned Features
 
-- 목표 독서량 / 읽은 책 권수 표시하는 대시보드
-- 친구와 책꽂이 공유하는 기능
+- 목표 독서량 / 읽은 책 권수 표시하는 대시보드 <br/>
+Dashboard to display your reading goals and number of books read
+- 친구와 책꽂이 공유하는 기능 <br/>
+Function to share bookshelves with friends
 
 ## Pages / 페이지
 
@@ -57,9 +67,7 @@
 
    (이미지 추가 예정)
 
-## Technologies / 개발 환경 및 사용한 기술
-
-이 프로젝트는 아래의 프레이워크 및 라이브러리를 사용해서 만들었습니다:
+## Technologies used / 개발 환경 및 사용한 기술
 
 - React 18.2.0
 - Node.js 16.14.0
